@@ -4,5 +4,5 @@
   "exclude": ["dist"],
   "compilerOptions": {
     "strictNullChecks": true
-  }
+  },
 }
