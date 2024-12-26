@@ -17,6 +17,7 @@ enum KeepSide {
 }
 
 const transformCommand = 'highlight';
+const startLineCommand = 'startLine';
 
 const regexp = /(([\d]+)(?:-([\d]+))?(?::([\d]+)(?:-([\d]+))?)?(?:#([A-Za-z]+))?),?/g;
 
@@ -34,15 +35,13 @@ const parseTransformMeta = (meta: string | null): HighlightedSegment[] | null =>
         };
     });
 
-    if (values.length === 0) {
-        return null;
-    }
-    else {
-        return values;
-    }
+    return values.length !== 0 ? values : null;
 };
 
-const getSegmentByLines = (segments: HighlightedSegment[]): Map<number, HighlightedSegment[]> => {
+const getSegmentByLines = (
+    segments: HighlightedSegment[],
+): Map<number, HighlightedSegment[]> => {
+
     const lines = new Map<number, HighlightedSegment[]>();
     for (let index = 0; index < segments.length; index++) {
         const segment = segments[index];
@@ -154,7 +153,7 @@ const splitElement = (
                 node.children.splice(splitChildIndex);
             }
             else {
-                node.children.splice(0, splitChildIndex);
+                node.children.splice(0, splitChildIndex - 1);
             }
         }
         return newElement;
@@ -224,95 +223,152 @@ const transform = (): ShikiTransformer => {
 
     return {
         name: 'devblog-transformers:meta-highlight',
-        line(node, line) {
+        code(node) {
             // Find relevant data from options meta
-            const highlightMeta = parseMeta(this.options.meta?.__raw, transformCommand);
+            const highlightMeta = parseMeta(this.options, transformCommand);
+            const startLineMeta = parseMeta(this.options, startLineCommand);
 
             // Parse text data for highlight segments
             const segments = parseTransformMeta(highlightMeta);
+            let startLine = 1;
+            if (startLineMeta) {
+                const startLineParse = parseInt(startLineMeta);
+                if (!Number.isNaN(startLineParse)) {
+                    startLine = startLineParse;
+                }
+                else {
+                    console.error('Start line is not a number.')
+                    startLine = 1;
+                }
+            }
 
             // Check valid segments and node
             if (segments === null || node.type !== 'element') {
                 return node;
             }
-
+            
             // Organize segments by lines
             const lines = getSegmentByLines(segments);
             
-            // Current line has no highlights
-            if (!lines.has(line)) {
-                return node;
+            // Line test
+            const isLine = (line: ElementContent): boolean => {
+                return (
+                    line.type === 'element' &&
+                    line.tagName === 'span' &&
+                    !!line.properties &&
+                    !!line.properties['class'] &&
+                    (line.properties['class'] as string).split(' ').includes('line')
+                );
+            };
+
+            // Find last possible line
+            let maxLineNumber = startLine - 1;
+            for (const line of node.children) {
+                if (isLine(line)) {
+                    maxLineNumber++;
+                }
             }
+            
+            let lineCount = startLine;
+            for (let j = 0; j < node.children.length; j++) {
+                // Skip nodes that are not lines of code
+                if (!isLine(node.children[j])) {
+                    continue;
+                }
 
-            const lineSegments = lines.get(line);
+                const line = node.children[j] as Element;
+                const lineNumber = lineCount++;
 
-            for (const segment of lineSegments!) {
-                // Invalid segment
-                if ((segment.endLine && segment.endLine < segment.startLine)
-                    || (segment.endChar && segment.endChar < segment.startChar)) {
+                // Current line has no highlights
+                if (!lines.has(lineNumber)) {
+                    continue;
+                }
+                
+                const lineSegments = lines.get(lineNumber);
+
+                for (const segment of lineSegments!) {
+                    
+                    // Invalid segment
+                    if ((segment.endLine && segment.endLine < segment.startLine)
+                        || (segment.endChar && segment.endChar < segment.startChar)) {
+                            console.error(`Highlight start must be before end.`, segment);
+                            continue;
+                        }
+                    else if (segment.startLine > maxLineNumber) {
+                        console.error(`Highlight start line (${segment.startLine}) out of range.`);
                         continue;
                     }
-                
-                // Highlight entire line
-                if (!segment.startChar) {
-                    node.properties = node.properties || {};
-                    node.properties['data-highlighted-line'] = '';
-                    if (segment.dataId) {
-                        node.properties['data-highlighted-line-id'] = segment.dataId;
-                    }
-                }
-                // Select text from elements
-                else {
-                    let startIndex = segment.startChar;
-                    let endIndex = segment.endChar;
-                    let startMark: number | null = null;
-                    let endMark: number | null = null;
-                    let i = 0;
-                    while (i < node.children.length && endMark === null) {
-                        const child = node.children[i] as Element;
-                        const textLength = getTextLength(child);
-                        
-                        if (startMark === null) {
-                            if (startIndex === 0) {
-                                startMark = i;
-                                endIndex -= startIndex;
-                            }
-                            else if (startIndex < textLength) {
-                                const newSplitNode = splitElement(child, startIndex, KeepSide.Left);
-                                startMark = i + 1;
-                                node.children.splice(startMark, 0, newSplitNode);
-                                endIndex -= startIndex;
-                                i++;
-                                continue;
-                            }
-                            else {
-                                startIndex -= textLength;
-                                endIndex -= textLength;
-                            }
-                        }
-
-                        if (startMark !== null && endMark === null) {
-                            if (endIndex === 0) {
-                                endMark = i;
-                            }
-                            else if (endIndex < textLength) {
-                                const newSplitNode = splitElement(child, endIndex, KeepSide.Right);
-                                endMark = i + 1;
-                                node.children.splice(endMark - 1, 0, newSplitNode);
-                            }
-                            else {
-                                endIndex -= textLength;
-                            }
-                        }
-
-                        i++;
-                    }
                     
-                    markTokens(node, startMark!, endMark, segment.dataId);
+                    // Highlight entire line
+                    if (!segment.startChar) {
+                        line.properties = line.properties || {};
+                        line.properties['data-highlighted-line'] = '';
+                        if (segment.dataId) {
+                            line.properties['data-highlighted-line-id'] = segment.dataId;
+                        }
+                    }
+                    // Select text from elements
+                    else {
+                        let startIndex = segment.startChar;
+                        let endIndex = segment.endChar;
 
+                        const overallTextLength = getTextLength(node);
+                        if (startIndex >= overallTextLength) {
+                            console.error(`Start character index (${startIndex}) out of range.`);
+                            continue;
+                        }
+
+                        let startMark: number | null = null;
+                        let endMark: number | null = null;
+                        let i = 0;
+                        while (i < line.children.length && endMark === null) {
+                            const child = line.children[i] as Element;
+                            const textLength = getTextLength(child);
+                            
+                            if (startMark === null) {
+                                if (startIndex === 0) {
+                                    startMark = i;
+                                    endIndex -= startIndex;
+                                }
+                                else if (startIndex < textLength) {
+                                    const newSplitNode = splitElement(child, startIndex, KeepSide.Left);
+                                    startMark = i + 1;
+                                    line.children.splice(startMark, 0, newSplitNode);
+                                    endIndex -= startIndex;
+                                    i++;
+                                    continue;
+                                }
+                                else {
+                                    startIndex -= textLength;
+                                    endIndex -= textLength;
+                                }
+                            }
+
+                            if (startMark !== null && endMark === null) {
+                                if (endIndex === 0) {
+                                    endMark = i;
+                                }
+                                else if (endIndex < textLength) {
+                                    const newSplitNode = splitElement(child, endIndex, KeepSide.Right);
+                                    endMark = i + 1;
+                                    line.children.splice(endMark - 1, 0, newSplitNode);
+                                }
+                                else {
+                                    endIndex -= textLength;
+                                }
+                            }
+
+                            i++;
+                        }
+                        if (!startMark) {
+                            console.error('Highlight out of range.', segment);
+                        } else {
+                            markTokens(line, startMark, endMark, segment.dataId);
+                        }
+                    }
                 }
             }
-
+            
             return node;
         }
     };

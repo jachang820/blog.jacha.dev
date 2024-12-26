@@ -1,17 +1,24 @@
+import type { CodeOptionsMeta } from 'shiki';
 
 export const parseMeta = (
-    meta: string | undefined, 
+    options: CodeOptionsMeta, 
     commandName: string
 ): string | null => {
 
     let value = null;
-    if (meta) {
-        meta.split(';').forEach((option) => {
-            const [key, value_string] = option.trim().split('=');
-            if (key.trim() === commandName) {
-                value = value_string.trim();
-            }
-        });
+    if (options.meta) {
+        if (commandName in options.meta) {
+            value = options.meta[commandName].trim();
+        }
+        else if (options.meta.__raw) {
+            options.meta.__raw.split(';').forEach((option) => {
+                const [key, value_string] = option.trim().split('=');
+                if (key.trim() === commandName) {
+                    value = value_string.trim();
+                }
+            });
+        }
     }
+    
     return value;
 };
