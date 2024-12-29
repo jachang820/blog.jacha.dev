@@ -1,6 +1,6 @@
 import type { ShikiTransformer } from 'shiki';
 
-import { parseMeta } from './utils';
+import { parseMeta, alterRGB } from './utils';
 
 const startLineCommand = 'startLine';
 
@@ -33,40 +33,32 @@ const transform = (): ShikiTransformer => {
             node.properties['data-line-numbers'] = '';
             node.properties['data-line-number-max-digits'] = maxLineDigits.toString();
 
-            // Add styling to line::before pseudo-elements to show line numbers
-            node.children.push({
-                type: 'element',
-                tagName: 'style',
-                properties: {},
-                children: [{
-                    type: 'text',
-                    value: `
-                        code[data-line-numbers] .line::before {
-                            --line-number-color: rgba(115 138 148 / 50%);
-                            content: counter(line);
-                            counter-increment: line;
-                            width: 0.75rem;
-                            margin-right: 2rem;
-                            display: inline-block;
-                            text-align: right;
-                            padding-right: 5px;
-                            border-right: 1px solid var(--line-number-color);
-                            color: var(--line-number-color);
-                        }
-                            
-                        code[data-line-number-max-digits="2"] .line::before {
-                            width: 1.5rem;
-                        }
-
-                        code[data-line-number-max-digits="3"] .line::before {
-                            width: 2.25rem;
-                        }
-
-                        code[data-line-number-max-digits="4"] .line::before {
-                            width: 3rem;
-                        }`
-                }]
+            return node;
+        },
+        pre(node) {
+            // Get text color style
+            const lineNumberStylesArray: string[] = [];
+            const stylesString = node.properties['style'] as string;
+            stylesString.split(';').forEach((style) => {
+                const [key, value] = style.trim().split(':');
+                const newKey = key.replace('shiki', 'shiki-lineno');
+                if (key === '--shiki-light') {
+                    const newValue = alterRGB(value, (decimal) => decimal * 5);
+                    lineNumberStylesArray.push(`${newKey}:${newValue};`);
+                }
+                else if (key === '--shiki-dark') {
+                    const newValue = alterRGB(value, (decimal) => Math.floor(decimal * 0.5));
+                    lineNumberStylesArray.push(`${newKey}:${newValue};`);
+                }
             });
+
+            const lineNumberStyles = lineNumberStylesArray.join(' ');
+            for (const child of node.children) {
+                if (child.type === 'element' && child.tagName === 'code') {
+                    child.properties['style'] = child.properties['style'] + lineNumberStyles;
+                    break;
+                }
+            }
 
             return node;
         }

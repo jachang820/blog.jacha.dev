@@ -55,11 +55,21 @@ const transform = (): ShikiTransformer => {
                 const [key, value] = option.trim().split('=');
                 const optionValue = parseTransformMeta(value);
                 if (optionValue) {
-                    options.meta[key] = optionValue;
+                    options.meta[key] = value;
                 }
             }
 
             return code;
+        },
+        pre(node) {
+            // Remove unnecessary properties from pre tag
+            if (this.options.meta) {
+                const meta = Object(this.options.meta)
+                const keys = Object.keys(meta);
+                for (const key of keys) {
+                    delete node.properties[key];
+                }
+            }
         }
     };
 };

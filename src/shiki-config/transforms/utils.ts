@@ -22,3 +22,18 @@ export const parseMeta = (
     
     return value;
 };
+
+export const alterRGB = (rgb: string, func: (decimal: number) => number) => {
+    const originalHex = '0x' + rgb.substring(1);
+    let originalDecimal = parseInt(originalHex, 16);
+    const colors = [0, 0, 0];
+    for (let i = 2; i >= 0; i--) {
+        colors[i] = func(originalDecimal % 256);
+        originalDecimal = Math.floor(originalDecimal / 256);
+    }
+    return '#' + colors.map((color) => {
+        const colorHex = color.toString(16);
+        const length = colorHex.length;
+        return ('0' + colorHex).substring(length - 1, 3);
+    }).join('');
+};

@@ -1,7 +1,7 @@
 import type { ShikiTransformer } from 'shiki';
 import type { Element, Text } from 'hast';
 
-import { parseMeta } from './utils';
+import { parseMeta, alterRGB } from './utils';
 
 const titleCommand = 'title';
 const captionTextCommand = 'caption';
@@ -18,6 +18,8 @@ const parseTransformMeta = (meta: string | null): string | null => {
     return meta;
 };
 
+
+
 const transform = (): ShikiTransformer => {
     
     return {
@@ -25,30 +27,53 @@ const transform = (): ShikiTransformer => {
         root(node) {
             // Find relevant data from options meta
             const titleMeta = parseMeta(this.options, titleCommand);
-            const captionMeta = parseMeta(this.options, captionTextCommand);
-            const captionHrefMeta = parseMeta(this.options, captionLinkCommand);
 
             // Parse text data for title and captions
             const title = parseTransformMeta(titleMeta);
-            const caption = parseTransformMeta(captionMeta);
-            const captionHref = parseTransformMeta(captionHrefMeta);
 
             // Check if data exists
-            if (!title && !caption) {
+            if (!title) {
                 return node;
             }
 
             // Get existing code
             const pre = node.children[0] as Element;
             const lang = pre.properties['dataLanguage'] as string;
-            pre.properties['style'] = pre.properties['style'] + 'overflow-y: hidden;';
+            pre.properties['data-block-code'] = '';
+            pre.properties['style'] = pre.properties['style'] + ' overflow-y: hidden;';
+
+            // Get secondary theme colors
+            const figcaptionStylesArray: string[] = [];
+            const preStyles = pre.properties['style'].split(';').forEach((style) => {
+                const [key, value] = style.trim().split(':');
+                if (key.startsWith('--')) {
+                    const figcaptionKey = key.replace('shiki', 'shiki-caption');
+                    let newValue;
+                    if (key === '--shiki-light') {
+                        newValue = alterRGB(value, (decimal) => decimal * 4);
+                    }
+                    else if (key === '--shiki-light-bg') {
+                        newValue = alterRGB(value, 
+                            (decimal) => Math.floor(decimal * 0.9));
+                    }
+                    else if (key === '--shiki-dark') {
+                        newValue = alterRGB(value, 
+                            (decimal) => Math.floor(decimal * 0.8));
+                    }
+                    else if (key === '--shiki-dark-bg') {
+                        newValue = alterRGB(value, (decimal) => Math.floor(decimal * 1.5));
+                    }
+                    figcaptionStylesArray.push(`${figcaptionKey}:${newValue};`);
+                }
+            });
+            const figcaptionStyles = figcaptionStylesArray.join(' ');
 
             // Create a figure element
             const figure: Element = {
                 type: 'element',
                 tagName: 'figure',
                 properties: {
-                    'style': `font-size: 1rem; overflow-y: hidden;`
+                    'data-code-block-figure': ''
                 },
                 children: []
             };
@@ -56,8 +81,10 @@ const transform = (): ShikiTransformer => {
             if (title) {
                 figure.children.push({
                     type: 'element',
-                    tagName: caption ? 'div' : 'figcaption',
+                    tagName: 'figcaption',
                     properties: {
+                        'style': figcaptionStyles,
+                        'data-code-caption': '',
                         'data-language': lang
                     },
                     children: [
@@ -65,7 +92,8 @@ const transform = (): ShikiTransformer => {
                             type: 'element',
                             tagName: 'span',
                             properties: {
-                                'data-code-title': ''
+                                'data-code-title': '',
+                                'style': pre.properties['style']
                             },
                             children: [{ type: 'text', value: title }]
                         }, 
@@ -82,46 +110,6 @@ const transform = (): ShikiTransformer => {
             }
 
             figure.children.push(pre);
-            
-            if (caption || captionHref) {
-                const figcaption: Element = {
-                    type: 'element',
-                    tagName: 'figcaption',
-                    properties: {
-                        'data-language': lang
-                    },
-                    children: []
-                };
-                if (captionHref) {
-                    const captionAnchor: Element = {
-                        type: 'element',
-                        tagName: 'a',
-                        properties: {
-                            'href': captionHref,
-                            'target': '_blank',
-                            'rel': 'external noopener noreferrer'
-                        },
-                        children: []
-                    };
-                    if (caption) {
-                        captionAnchor.children.push({ 
-                            type: 'text', value: caption
-                        });
-                    }
-                    else {
-                        captionAnchor.children.push({
-                            type: 'text', value: captionHref
-                        });
-                    }
-                    figcaption.children.push(captionAnchor);
-                }
-                else if (caption) {
-                    figcaption.children.push({ 
-                        type: 'text', value: caption
-                    });
-                }
-                figure.children.push(figcaption);
-            }
             
             node.children.splice(0, 1, figure);
 

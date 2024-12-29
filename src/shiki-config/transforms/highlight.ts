@@ -1,7 +1,7 @@
 import type { ShikiTransformer } from 'shiki';
 import type { Element, Text, ElementContent, Properties } from 'hast';
 
-import { parseMeta } from './utils';
+import { parseMeta, alterRGB } from './utils';
 
 export type HighlightedSegment = {
     startLine: number,
@@ -298,7 +298,7 @@ const transform = (): ShikiTransformer => {
                         console.error(`Highlight start line (${segment.startLine}) out of range.`);
                         continue;
                     }
-                    
+                    console.log(segment);
                     // Highlight entire line
                     if (!segment.startChar) {
                         line.properties = line.properties || {};
@@ -370,8 +370,35 @@ const transform = (): ShikiTransformer => {
             }
             
             return node;
+        },
+        pre(node) {
+            // Get text color style
+            const lineNumberStylesArray: string[] = [];
+            const stylesString = node.properties['style'] as string;
+            stylesString.split(';').forEach((style) => {
+                const [key, value] = style.trim().split(':');
+                const newKey = key.replace('shiki', 'shiki-highlighted');
+                if (key === '--shiki-light-bg') {
+                    const newValue = alterRGB(value, (decimal) => Math.floor(decimal * 0.9));
+                    lineNumberStylesArray.push(`${newKey}:${newValue};`);
+                }
+                else if (key === '--shiki-dark-bg') {
+                    const newValue = alterRGB(value, (decimal) => Math.floor(decimal * 1.5));
+                    lineNumberStylesArray.push(`${newKey}:${newValue};`);
+                }
+            });
+
+            const lineNumberStyles = lineNumberStylesArray.join(' ');
+            for (const child of node.children) {
+                if (child.type === 'element' && child.tagName === 'code') {
+                    child.properties['style'] = child.properties['style'] + lineNumberStyles;
+                    break;
+                }
+            }
+
+            return node;
         }
-    };
+};
 };
 
 export default transform;

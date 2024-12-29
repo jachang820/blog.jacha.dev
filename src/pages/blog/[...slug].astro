@@ -19,3 +19,235 @@ const { Content } = await render(post);
 <BlogPost {...post.data}>
 	<Content />
 </BlogPost>
+
+<style is:global>
+	@layer layout {
+		:root {
+			--blog-accent-light: rgba(70 126 247 / 0.8);
+			--blog-accent-dark: rgba(130 172 250 / 0.8);
+		}
+
+		.prose {
+			font-size: 1.25rem;
+		}
+
+		a {
+			@media (prefers-color-scheme: light) {
+				color: var(--blog-accent-light);
+			}
+
+			@media (prefers-color-scheme: dark) {
+				color: var(--blog-accent-dark);
+			}
+		}
+
+		figure[data-code-block-figure] {
+			position: relative;
+			font-size: 1rem; 
+			margin: 0 1.5rem 0 1.5rem;
+			overflow-y: hidden;
+			border: solid rgba(115 138 148 / 50%) 1px;
+			border-radius: 5px;
+
+			& [data-code-caption] {
+				display: flex;
+				justify-content: space-between;
+
+				@media (prefers-color-scheme: light) {
+					color: var(--shiki-caption-light);
+					background-color: var(--shiki-caption-light-bg);
+				}
+
+				@media (prefers-color-scheme: dark) {
+					color: var(--shiki-caption-dark);
+					background-color: var(--shiki-caption-dark-bg);
+				}
+
+				& span[data-code-title] {
+					content: '';
+					position: absolute;
+					left: 0;
+					top: 0;
+					font-size: 1.1rem;
+					padding-left: 0.75rem;
+					padding-right: 0.75rem;
+					border-bottom: solid 1px transparent;
+					z-index: 1;
+
+					@media (prefers-color-scheme: light) {
+						color: var(--shiki-light);
+						background-color: var(--shiki-light-bg);
+						border-top: solid 3px var(--blog-accent-light);
+					}
+
+					@media (prefers-color-scheme: dark) {
+						color: var(--shiki-dark);
+						background-color: var(--shiki-dark-bg);
+						border-top: solid 3px var(--blog-accent-dark);
+					}
+				}
+
+				& span[data-code-title-language] {
+					text-transform: uppercase;
+					font-weight: bold;
+					letter-spacing: 1px;
+					margin-left: auto;
+					padding-left: 0.75rem;
+					padding-right: 0.75rem;
+				}
+			}
+		}
+
+		.astro-code,
+		.astro-code code {
+
+			@media (prefers-color-scheme: light) {
+				background-color: var(--shiki-light-bg);
+			}
+
+			@media (prefers-color-scheme: dark) {
+				background-color: var(--shiki-dark-bg);
+			}
+		}
+
+		.astro-code {
+			padding: 0.25rem;
+			margin: 0;
+
+			&[data-block-code] {
+				border-radius: 0;
+			}
+
+			&[data-inline-code] {
+				font-size: 0.9em;
+				border-radius: 5px;
+				border: solid rgba(115 138 148 / 50%) 1px;
+			}
+
+			& span.line {
+				white-space : pre-wrap !important;
+
+				&[data-highlighted-line] {
+					@media (prefers-color-scheme: light) {
+						background-color: var(--shiki-highlighted-light-bg);
+					}
+
+					@media (prefers-color-scheme: dark) {
+						background-color: var(--shiki-highlighted-dark-bg);
+					}
+				}
+
+				& span {
+					@media (prefers-color-scheme: light) {
+						color: var(--shiki-light);
+						font-style: var(--shiki-light-font-style);
+						font-weight: var(--shiki-light-font-weight);
+						text-decoration: var(--shiki-light-text-decoration);
+					}
+
+					@media (prefers-color-scheme: dark) {
+						color: var(--shiki-dark);
+						font-style: var(--shiki-dark-font-style);
+						font-weight: var(--shiki-dark-font-weight);
+						text-decoration: var(--shiki-dark-text-decoration);
+					}
+				}
+			}
+
+			
+		}
+
+		
+
+		code[data-line-numbers] { 
+			display: grid;
+			
+			& span.line::before {
+				content: counter(line);
+				counter-increment: line;
+				width: 0.75rem;
+				margin-right: 1rem;
+				display: inline-block;
+				text-align: right;
+				padding-right: 5px;
+
+				@media (prefers-color-scheme: light) {
+					border-right: 1px solid var(--shiki-lineno-light);
+					color: var(--shiki-lineno-light);
+				}
+
+				@media (prefers-color-scheme: dark) {
+					border-right: 1px solid var(--shiki-lineno-dark);
+					color: var(--shiki-lineno-dark);
+				}
+			}
+
+			&[data-line-number-max-digits="2"] span.line::before {
+				width: 1.5rem;
+			}
+
+			&[data-line-number-max-digits="3"] span.line::before {
+				width: 2.25rem;
+			}
+
+			&[data-line-number-max-digits="4"] span.line::before {
+				width: 3rem;
+			}
+
+		}
+
+		figure + p:has(cite) {
+			margin-top: 0;
+			margin-left: 1.5rem;
+			margin-right: 1.5rem;
+			font-size: 1.1rem;
+
+			&::before {
+				content: 'Source:';
+				font-style: normal;
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
+			}
+		}
+
+		p img {
+			display: block;
+		}
+
+		img + cite {
+			font-size: 1.1rem;
+
+			&::before {
+				content: 'Source:';
+				font-style: normal;
+				padding-left: 0.5rem;
+				padding-right: 0.5rem;
+			}
+		}
+
+		blockquote {
+			position: relative;
+			font-size: 1.1em;
+			margin-left: 1.5em;
+
+			@media (prefers-color-scheme: light) {
+				border-left: 4px solid var(--blog-accent-light);
+			}
+			@media (prefers-color-scheme: dark) {
+				border-left: 4px solid var(--blog-accent-dark);
+			}
+
+			& cite {
+				display: block;
+				margin-left: 3em;
+				font-size: 1.1rem;
+
+				&::before {
+					content: '— ';
+				}
+			}
+		}
+	}
+	
+
+</style>

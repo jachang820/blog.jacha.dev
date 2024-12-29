@@ -88,15 +88,31 @@ const highlightInlineCode = () => {
             // Syntax highlighted structure
             const newParent = highlighter.codeToHast(instance.code, {
                 lang: instance.language, 
-                themes: config.themes!
+                themes: config.themes!,
+                defaultColor: false
             });
             const newPre = newParent.children[0] as Element;
+            const newCode = newPre.children[0] as Element;
+
+            // Replace class with astro-code to conform
+            let preClasses = newPre.properties['class'] as string;
+            preClasses = preClasses.replaceAll('shiki', 'astro-code');
+            newPre.properties['class'] = preClasses;
+            newPre.properties['data-inline-code'] = '';
+
+            // Create span to keep markdown processing inline
+            const span: Element = {
+                type: 'element',
+                tagName: 'span',
+                properties: {
+                    'data-inline-wrap': ''
+                },
+                children: [newPre]
+            };
 
             // Replace original element
-            instance.node.tagName = newPre.tagName;
             instance.node.properties = newPre.properties;
-            instance.node.properties['data-inline-code'] = '';
-            instance.node.children = newPre.children;
+            instance.node.children = newCode.children;
         }
     }
 };

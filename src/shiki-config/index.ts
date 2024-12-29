@@ -15,8 +15,9 @@ import metaFigureTransform from './transforms/figure';
 const config: Partial<ShikiConfig> = {
     themes: {
         light: 'github-light-default',
-        dark: 'github-dark-default',
+        dark: 'github-dark-dimmed',
     },
+    defaultColor: false,
     transformers: [
         metaExpandedMetaTransform(),
         metaHighlightTransform(),

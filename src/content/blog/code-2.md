@@ -8,8 +8,9 @@ heroImage: '/blog-placeholder-3.jpg'
 ```svelte meta="---"
 ---
 title="Code 2"
+caption="Example code"
 startLine=86
-highlight=[87:7-13#v,87:8-12#f]
+highlight=[87-89]
 ---
 <script>
     if (line.trim().length === 0) {
@@ -28,4 +29,12 @@ highlight=[87:7-13#v,87:8-12#f]
     }
 </style>
 ```
-`const name = 'John'; {:js}`
+<cite>[Edgar Allen Poe](http://www.google.com)</cite>
+
+This is inline code `const name = 'John';{:js}`. Isn't it amazing?
+
+> Quoth the raven, never more.
+> <cite>[Edgar Allen Poe](http://www.google.com)</cite>
+
+![image](/blog-placeholder-2.jpg)
+<cite>[Edgar Allen Poe](http://www.google.com)</cite>
