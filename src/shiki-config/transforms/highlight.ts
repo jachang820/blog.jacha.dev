@@ -1,7 +1,7 @@
 import type { ShikiTransformer } from 'shiki';
 import type { Element, Text, ElementContent, Properties } from 'hast';
 
-import { parseMeta, alterRGB } from './utils';
+import { parseMeta, alterRGB, isLine } from './utils';
 
 export type HighlightedSegment = {
     startLine: number,
@@ -249,17 +249,6 @@ const transform = (): ShikiTransformer => {
             
             // Organize segments by lines
             const lines = getSegmentByLines(segments);
-            
-            // Line test
-            const isLine = (line: ElementContent): boolean => {
-                return (
-                    line.type === 'element' &&
-                    line.tagName === 'span' &&
-                    !!line.properties &&
-                    !!line.properties['class'] &&
-                    (line.properties['class'] as string).split(' ').includes('line')
-                );
-            };
 
             // Find last possible line
             let maxLineNumber = startLine - 1;
@@ -298,7 +287,7 @@ const transform = (): ShikiTransformer => {
                         console.error(`Highlight start line (${segment.startLine}) out of range.`);
                         continue;
                     }
-                    console.log(segment);
+
                     // Highlight entire line
                     if (!segment.startChar) {
                         line.properties = line.properties || {};

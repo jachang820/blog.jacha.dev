@@ -37,13 +37,21 @@
 		margin: 0;
 		padding: 0;
 		text-align: left;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
 		background-size: 100% 600px;
 		word-wrap: break-word;
 		overflow-wrap: break-word;
-		color: rgb(var(--gray-dark));
 		font-size: 20px;
 		line-height: 1.7;
+
+		@media (prefers-color-scheme: light) {
+			background: linear-gradient(var(--gray-gradient)) no-repeat;
+			color: rgb(var(--gray-dark));
+		}
+
+		@media (prefers-color-scheme: dark) {
+			background-color: var(--gray-dark);
+			color: whitesmoke;
+		}
 	}
 	main {
 		width: 720px;

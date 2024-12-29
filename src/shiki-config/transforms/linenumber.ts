@@ -1,6 +1,7 @@
 import type { ShikiTransformer } from 'shiki';
+import type { Element, Text } from 'hast';
 
-import { parseMeta, alterRGB } from './utils';
+import { parseMeta, alterRGB, isLine } from './utils';
 
 const startLineCommand = 'startLine';
 
@@ -23,14 +24,46 @@ const transform = (): ShikiTransformer => {
             // Parse text data for starting line number
             const startLine = parseTransformMeta(startLineMeta) ?? 1;
 
-            // Start CSS counter
-            node.properties['style'] = `counter-set: line ${startLine - 1};`;
+            // Add line numbers to each line
+            let lineNumber = startLine - 1;
+            for (let i = 0; i < node.children.length; i++) {
+                if (!isLine(node.children[i])) {
+                    continue;
+                }
+
+                lineNumber++;
+                const line = node.children[i] as Element;
+
+                // Create spans to hold line number and wrap code
+                const lineNumberText: Text = {
+                    type: 'text',
+                    value: lineNumber.toString()
+                };
+
+                const lineNumberSpan: Element = {
+                    type: 'element',
+                    tagName: 'span',
+                    properties: {
+                        'data-line-number': ''
+                    },
+                    children: [lineNumberText]
+                };
+
+                const code: Element = {
+                    type: 'element',
+                    tagName: 'span',
+                    properties: {
+                        'data-line-code-wrapper': ''
+                    },
+                    children: line.children
+                };
+
+                line.children = [lineNumberSpan, code];
+                line.properties['data-line'] = '';
+            }
 
             // Adjust width according to max line number digits
-            const lines = node.children.length;
-            const lastLineNumber = startLine + lines - 1;
-            const maxLineDigits = lastLineNumber.toString().length;
-            node.properties['data-line-numbers'] = '';
+            const maxLineDigits = lineNumber.toString().length;
             node.properties['data-line-number-max-digits'] = maxLineDigits.toString();
 
             return node;

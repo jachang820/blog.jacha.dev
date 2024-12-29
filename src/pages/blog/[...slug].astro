@@ -25,6 +25,12 @@ const { Content } = await render(post);
 		:root {
 			--blog-accent-light: rgba(70 126 247 / 0.8);
 			--blog-accent-dark: rgba(130 172 250 / 0.8);
+			--code-diff-add-symbol: #18794e;
+			--code-diff-add-highlight: rgba(16 185 129 / 0.15);
+			--code-diff-remove-symbol: #b34e52;
+			--code-diff-remove-highlight: rgba(244 63 94 / 0.15);
+			--code-line-error: rgba(244 63 94 / 0.15);
+			--code-line-warning: rgba(234 179 8 / 0.15);
 		}
 
 		.prose {
@@ -47,7 +53,7 @@ const { Content } = await render(post);
 			margin: 0 1.5rem 0 1.5rem;
 			overflow-y: hidden;
 			border: solid rgba(115 138 148 / 50%) 1px;
-			border-radius: 5px;
+			border-radius: 8px;
 
 			& [data-code-caption] {
 				display: flex;
@@ -124,8 +130,77 @@ const { Content } = await render(post);
 				border: solid rgba(115 138 148 / 50%) 1px;
 			}
 
+			code {
+				& .diff.add {
+					background-color: var(--code-diff-add-highlight);
+					opacity: 0.9;
+
+					& [data-line-code-wrapper]::before {
+						content: '++';
+						position: absolute;
+						width: 2rem;
+						color: var(--code-diff-add-symbol);
+					}
+				}
+
+				& .diff.remove {
+					background-color: var(--code-diff-remove-highlight);
+					opacity: 0.9;
+
+					& [data-line-code-wrapper]::before {
+						content: '--';
+						position: absolute;
+						width: 2rem;
+						color: var(--code-diff-remove-symbol);
+					}
+				}
+
+				& .highlighted.error {
+					background-color: var(--code-line-error);
+					opacity: 0.9;
+				}
+
+				& .highlighted.warning {
+					background-color: var(--code-line-warning);
+					opacity: 0.9;
+				}
+			}
+
+			& code[data-line-number-max-digits="1"] {
+				& span.diff.add [data-line-code-wrapper]::before,
+				& span.diff.remove [data-line-code-wrapper]::before {
+					left: 1.5rem;
+				}
+			}
+
+			& code[data-line-number-max-digits="2"] {
+				& span.diff.add [data-line-code-wrapper]::before,
+				& span.diff.remove [data-line-code-wrapper]::before {
+					left: 2.25rem;
+				}
+			}
+
+			& code[data-line-number-max-digits="3"] {
+				& span.diff.add [data-line-code-wrapper]::before,
+				& span.diff.remove [data-line-code-wrapper]::before {
+					left: 3rem;
+				}
+			}
+
+			& code[data-line-number-max-digits="4"] {
+				& span.diff.add [data-line-code-wrapper]::before,
+				& span.diff.remove [data-line-code-wrapper]::before {
+					left: 3.75rem;
+				}
+			}
+
 			& span.line {
+				position: relative;
 				white-space : pre-wrap !important;
+
+				& [data-line-code-wrapper] {
+					padding-left: 2rem;
+				}
 
 				&[data-highlighted-line] {
 					@media (prefers-color-scheme: light) {
@@ -138,6 +213,23 @@ const { Content } = await render(post);
 				}
 
 				& span {
+
+					&[data-line-tab], &[data-line-space] {
+						position: relative;
+					}
+
+					&[data-line-tab]::before {
+						content: '⇥';
+						position: absolute;
+						opacity: 0.3;
+					}
+
+					&[data-line-space]::before {
+						content: '·';
+						position: absolute;
+						opacity: 0.3;
+					}
+
 					@media (prefers-color-scheme: light) {
 						color: var(--shiki-light);
 						font-style: var(--shiki-light-font-style);
@@ -153,23 +245,16 @@ const { Content } = await render(post);
 					}
 				}
 			}
-
-			
 		}
 
-		
-
-		code[data-line-numbers] { 
+		.astro-code code { 
 			display: grid;
 			
-			& span.line::before {
-				content: counter(line);
-				counter-increment: line;
-				width: 0.75rem;
-				margin-right: 1rem;
+			& span[data-line-number] {
+				width: 0.5rem;
 				display: inline-block;
 				text-align: right;
-				padding-right: 5px;
+				padding-right: 7px;
 
 				@media (prefers-color-scheme: light) {
 					border-right: 1px solid var(--shiki-lineno-light);
@@ -180,18 +265,18 @@ const { Content } = await render(post);
 					border-right: 1px solid var(--shiki-lineno-dark);
 					color: var(--shiki-lineno-dark);
 				}
-			}
 
-			&[data-line-number-max-digits="2"] span.line::before {
-				width: 1.5rem;
-			}
+				[data-line-number-max-digits="2"] & {
+					width:1.25rem;
+				}
 
-			&[data-line-number-max-digits="3"] span.line::before {
-				width: 2.25rem;
-			}
+				[data-line-number-max-digits="3"] & {
+					width:2rem;
+				}
 
-			&[data-line-number-max-digits="4"] span.line::before {
-				width: 3rem;
+				[data-line-number-max-digits="4"] & {
+					width:2.75rem;
+				}
 			}
 
 		}

@@ -2,15 +2,14 @@ import type { ShikiConfig } from 'astro';
 
 import { 
     transformerNotationDiff,
-    transformerNotationErrorLevel,
-    transformerRenderWhitespace
+    transformerNotationErrorLevel
 } from '@shikijs/transformers';
 
 import metaExpandedMetaTransform from './transforms/meta';
 import metaHighlightTransform from './transforms/highlight';
-import metaTabSizeTransform from './transforms/indents';
 import metaLineNumberTransform from './transforms/linenumber';
 import metaFigureTransform from './transforms/figure';
+import renderWhitespaceTransform from './transforms/whitespace';
 
 const config: Partial<ShikiConfig> = {
     themes: {
@@ -19,14 +18,13 @@ const config: Partial<ShikiConfig> = {
     },
     defaultColor: false,
     transformers: [
-        metaExpandedMetaTransform(),
-        metaHighlightTransform(),
-        metaTabSizeTransform(),
-        metaLineNumberTransform(),
-        metaFigureTransform(),
         transformerNotationDiff(),
         transformerNotationErrorLevel(),
-        transformerRenderWhitespace()
+        renderWhitespaceTransform(),
+        metaExpandedMetaTransform(),
+        metaHighlightTransform(),
+        metaLineNumberTransform(),
+        metaFigureTransform()
     ]
 };
 

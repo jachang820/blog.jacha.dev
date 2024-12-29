@@ -4,8 +4,6 @@ import type { Element, Text } from 'hast';
 import { parseMeta, alterRGB } from './utils';
 
 const titleCommand = 'title';
-const captionTextCommand = 'caption';
-const captionLinkCommand = 'captionHref';
 
 const parseTransformMeta = (meta: string | null): string | null => {
     if (!meta || !meta.trim()) {

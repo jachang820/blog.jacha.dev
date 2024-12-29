@@ -1,4 +1,5 @@
 import type { CodeOptionsMeta } from 'shiki';
+import type { ElementContent } from 'hast';
 
 export const parseMeta = (
     options: CodeOptionsMeta, 
@@ -36,4 +37,17 @@ export const alterRGB = (rgb: string, func: (decimal: number) => number) => {
         const length = colorHex.length;
         return ('0' + colorHex).substring(length - 1, 3);
     }).join('');
+};
+
+export const isLine = (line: ElementContent): boolean => {
+    if (line.type === 'element' &&
+        line.tagName === 'span' &&
+        !!line.properties['class']) {
+            let classes = line.properties['class'];
+            if (typeof classes === 'string') {
+                classes = classes.split(' ');
+            }
+            return (classes as string[]).includes('line');
+    } 
+    return false;
 };

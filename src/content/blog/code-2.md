@@ -9,13 +9,13 @@ heroImage: '/blog-placeholder-3.jpg'
 ---
 title="Code 2"
 caption="Example code"
-startLine=86
-highlight=[87-89]
+startLine=1000
+highlight=[1001]
 ---
 <script>
     if (line.trim().length === 0) {
         /* Return blank lines verbatim. */
-        return line; // [!code warning]
+        return line; // [!code --]
     }
     else {
         /* Remove indent from non-empty lines. */
