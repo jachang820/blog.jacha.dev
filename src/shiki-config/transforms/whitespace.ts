@@ -80,6 +80,42 @@ const transform = (): ShikiTransformer => {
                     }
                 }
             });
+
+            // Split spaces before text into their own element
+            code.children.forEach((line) => {
+                if (isLine(line)) {
+                    line = line as Element;
+                    if (line.children && 
+                        line.children.length === 2 &&
+                        line.children[1].type === 'element' &&
+                        'data-line-code-wrapper' in Object(line.children[1].properties)
+                    ) {
+                        const lineCode = line.children[1] as Element;
+                        let count = 0;
+                        while (count < lineCode.children.length) {
+                            const child = lineCode.children[count] as Element;
+                            const partProperties = Object(child.properties);
+                            if ('data-line-space' in partProperties ||
+                                'data-line-tab' in partProperties
+                            ) {
+                                count++;
+                            }
+                            else {
+                                // First non-whitespace part
+                                break;
+                            }
+                        }
+                        const whitespaceElements = lineCode.children.splice(0, count);
+                        const whitespaceWrapper: Element = {
+                            type: 'element',
+                            tagName: 'span',
+                            properties: {'data-line-code-pre-ws': ''},
+                            children: whitespaceElements
+                        };
+                        line.children.splice(1, 0, whitespaceWrapper);
+                    }
+                }
+            });
         },
     };
 };

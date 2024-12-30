@@ -33,15 +33,15 @@ const { Content } = await render(post);
 
 		.prose {
 			font-size: 1.25rem;
-		}
+		
+			& a {
+				@media (prefers-color-scheme: light) {
+					color: var(--blog-accent-light);
+				}
 
-		a {
-			@media (prefers-color-scheme: light) {
-				color: var(--blog-accent-light);
-			}
-
-			@media (prefers-color-scheme: dark) {
-				color: var(--blog-accent-dark);
+				@media (prefers-color-scheme: dark) {
+					color: var(--blog-accent-dark);
+				}
 			}
 		}
 
@@ -150,9 +150,10 @@ const { Content } = await render(post);
 						background-color: var(--code-diff-add-highlight);
 						opacity: 0.9;
 
-						& [data-line-code-wrapper]::before {
+						& [data-line-code-pre-ws]::before {
 							content: '++';
 							position: absolute;
+							text-align: center;
 							width: 2rem;
 							color: var(--code-diff-add-symbol);
 						}
@@ -162,9 +163,10 @@ const { Content } = await render(post);
 						background-color: var(--code-diff-remove-highlight);
 						opacity: 0.9;
 
-						& [data-line-code-wrapper]::before {
+						& [data-line-code-pre-ws]::before {
 							content: '--';
 							position: absolute;
+							text-align: center;
 							width: 2rem;
 							color: var(--code-diff-remove-symbol);
 						}
@@ -182,30 +184,30 @@ const { Content } = await render(post);
 				}
 
 				& code[data-line-number-max-digits="1"] {
-					& span.diff.add [data-line-code-wrapper]::before,
-					& span.diff.remove [data-line-code-wrapper]::before {
-						left: 1.5rem;
+					& span.diff.add [data-line-code-pre-ws]::before,
+					& span.diff.remove [data-line-code-pre-ws]::before {
+						left: 1rem;
 					}
 				}
 
 				& code[data-line-number-max-digits="2"] {
-					& span.diff.add [data-line-code-wrapper]::before,
-					& span.diff.remove [data-line-code-wrapper]::before {
-						left: 2.25rem;
+					& span.diff.add [data-line-code-pre-ws]::before,
+					& span.diff.remove [data-line-code-pre-ws]::before {
+						left: 1.75rem;
 					}
 				}
 
 				& code[data-line-number-max-digits="3"] {
-					& span.diff.add [data-line-code-wrapper]::before,
-					& span.diff.remove [data-line-code-wrapper]::before {
-						left: 3rem;
+					& span.diff.add [data-line-code-pre-ws]::before,
+					& span.diff.remove [data-line-code-pre-ws]::before {
+						left: 2.5rem;
 					}
 				}
 
 				& code[data-line-number-max-digits="4"] {
-					& span.diff.add [data-line-code-wrapper]::before,
-					& span.diff.remove [data-line-code-wrapper]::before {
-						left: 3.75rem;
+					& span.diff.add [data-line-code-pre-ws]::before,
+					& span.diff.remove [data-line-code-pre-ws]::before {
+						left: 3.25rem;
 					}
 				}
 
@@ -258,12 +260,21 @@ const { Content } = await render(post);
 						}
 					}
 
+					& span[data-line-code-pre-ws] {
+						padding-left: 2rem;
+						flex-shrink: 0;
+					}
+
+					& span[data-line-code-wrapper] {
+						text-wrap: wrap;
+						text-indent: 1.5em hanging;
+					}
+
+					& span[data-line-code-pre-ws],
 					& span[data-line-code-wrapper] {
 						display: inline-block;
 						vertical-align: top;
 						height: 100%;
-						padding-left: 2rem;
-						text-wrap: wrap;
 
 						& [data-line-tab], & [data-line-space] {
 							position: relative;

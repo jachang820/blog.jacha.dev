@@ -9,8 +9,8 @@ heroImage: '/blog-placeholder-3.jpg'
 ---
 title="Code 2"
 caption="Example code"
-startLine=999
-highlight=[1000]
+startLine=9
+highlight=[10]
 ---
 <script>
     if (line.trim().length === 0) {
