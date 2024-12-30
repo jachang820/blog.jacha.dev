@@ -1,12 +1,14 @@
 ---
 const today = new Date();
+const name = 'Jonathan Chang';
 ---
 
 <footer>
-	&copy; {today.getFullYear()} Your name here. All rights reserved.
+	<hr>
+	&copy; {today.getFullYear()} {name}. All rights reserved.
 	<div class="social-links">
 		<a href="https://m.webtoo.ls/@astro" target="_blank">
-			<span class="sr-only">Follow Astro on Mastodon</span>
+			<span class="sr-only">Follow {name} on Mastodon</span>
 			<svg
 				viewBox="0 0 16 16"
 				aria-hidden="true"
@@ -20,7 +22,7 @@ const today = new Date();
 			>
 		</a>
 		<a href="https://twitter.com/astrodotbuild" target="_blank">
-			<span class="sr-only">Follow Astro on Twitter</span>
+			<span class="sr-only">Follow {name} on Twitter</span>
 			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/twitter"
 				><path
 					fill="currentColor"
@@ -29,7 +31,7 @@ const today = new Date();
 			>
 		</a>
 		<a href="https://github.com/withastro/astro" target="_blank">
-			<span class="sr-only">Go to Astro's GitHub repo</span>
+			<span class="sr-only">Go to {name}'s GitHub repo</span>
 			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/github"
 				><path
 					fill="currentColor"
@@ -40,23 +42,39 @@ const today = new Date();
 	</div>
 </footer>
 <style>
-	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
-		text-align: center;
-	}
-	.social-links {
-		display: flex;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 1em;
-	}
-	.social-links a {
-		text-decoration: none;
-		color: rgb(var(--gray));
-	}
-	.social-links a:hover {
-		color: rgb(var(--gray-dark));
+	@layer layout {
+		footer {
+			padding: 0 1em 6em 1em;
+			text-align: center;
+		}
+		footer hr {
+			width: 600px;
+			height: 1px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 2em;
+
+			@media (prefers-color-scheme: light) {
+				background-color: rgb(var(--gray-dark));
+			}
+			@media (prefers-color-scheme: dark) {
+				background-color: rgb(var(--gray-light));
+			}
+			
+			border: none;
+		}
+		.social-links {
+			display: flex;
+			justify-content: center;
+			gap: 1em;
+			margin-top: 1em;
+		}
+		.social-links a {
+			text-decoration: none;
+			color: rgb(var(--gray));
+		}
+		.social-links a:hover {
+			color: rgb(var(--gray-dark));
+		}
 	}
 </style>

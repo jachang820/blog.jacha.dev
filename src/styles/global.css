@@ -4,12 +4,14 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
- @layer default, layout;
+ @layer default, layout, specifics;
 
  @layer default {
 	:root {
 		--accent: #2337ff;
 		--accent-dark: #000d8a;
+		--blog-accent-light: rgba(70 126 247 / 0.8);
+		--blog-accent-dark: rgba(130 172 250 / 0.8);
 		--black: 15, 18, 25;
 		--gray: 96, 115, 159;
 		--gray-light: 229, 233, 240;
@@ -49,7 +51,7 @@
 		}
 
 		@media (prefers-color-scheme: dark) {
-			background-color: var(--gray-dark);
+			background-color: rgb(var(--gray-dark));
 			color: whitesmoke;
 		}
 	}
@@ -66,8 +68,16 @@
 	h5,
 	h6 {
 		margin: 0 0 0.5rem 0;
-		color: rgb(var(--black));
 		line-height: 1.2;
+
+		@media (prefers-color-scheme: light) {	
+			color: rgb(var(--black));
+		}
+
+		@media (prefers-color-scheme: dark) {
+			color: white;
+		}
+
 	}
 	h1 {
 		font-size: 3.052em;
@@ -88,11 +98,13 @@
 	b {
 		font-weight: 700;
 	}
-	a {
-		color: var(--accent);
-	}
-	a:hover {
-		color: var(--accent);
+	a, a:hover {
+		@media (prefers-color-scheme: light) {
+			color: var(--blog-accent-light);
+		}
+		@media (prefers-color-scheme: dark) {
+			color: var(--blog-accent-dark);
+		}
 	}
 	p {
 		margin-bottom: 1em;
@@ -128,7 +140,12 @@
 		all: unset;
 	}
 	blockquote {
-		border-left: 4px solid var(--accent);
+		@media (prefers-color-scheme: light) {
+			border-left: 4px solid var(--blog-accent-light);
+		}
+		@media (prefers-color-scheme: dark) {
+			border-left: 4px solid var(--blog-accent-dark);
+		}
 		padding: 0 0 0 20px;
 		margin: 0px;
 		font-size: 1.333em;

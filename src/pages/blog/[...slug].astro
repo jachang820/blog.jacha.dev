@@ -21,10 +21,8 @@ const { Content } = await render(post);
 </BlogPost>
 
 <style is:global>
-	@layer layout {
+	@layer specifics {
 		:root {
-			--blog-accent-light: rgba(70 126 247 / 0.8);
-			--blog-accent-dark: rgba(130 172 250 / 0.8);
 			--code-diff-add-symbol: #18794e;
 			--code-diff-add-highlight: rgba(16 185 129 / 0.15);
 			--code-diff-remove-symbol: #b34e52;
@@ -114,15 +112,27 @@ const { Content } = await render(post);
 			@media (prefers-color-scheme: dark) {
 				background-color: var(--shiki-dark-bg);
 			}
+
+			& span {
+				@media (prefers-color-scheme: light) {
+					color: var(--shiki-light);
+					font-style: var(--shiki-light-font-style);
+					font-weight: var(--shiki-light-font-weight);
+					text-decoration: var(--shiki-light-text-decoration);
+				}
+
+				@media (prefers-color-scheme: dark) {
+					color: var(--shiki-dark);
+					font-style: var(--shiki-dark-font-style);
+					font-weight: var(--shiki-dark-font-weight);
+					text-decoration: var(--shiki-dark-text-decoration);
+				}
+			}
 		}
 
 		.astro-code {
 			padding: 0.25rem;
 			margin: 0;
-
-			&[data-block-code] {
-				border-radius: 0;
-			}
 
 			&[data-inline-code] {
 				font-size: 0.9em;
@@ -130,155 +140,149 @@ const { Content } = await render(post);
 				border: solid rgba(115 138 148 / 50%) 1px;
 			}
 
-			code {
-				& .diff.add {
-					background-color: var(--code-diff-add-highlight);
-					opacity: 0.9;
+			&[data-block-code] {
+				border-radius: 0;
 
-					& [data-line-code-wrapper]::before {
-						content: '++';
-						position: absolute;
-						width: 2rem;
-						color: var(--code-diff-add-symbol);
+				& code {
+					display: grid;
+
+					& .diff.add {
+						background-color: var(--code-diff-add-highlight);
+						opacity: 0.9;
+
+						& [data-line-code-wrapper]::before {
+							content: '++';
+							position: absolute;
+							width: 2rem;
+							color: var(--code-diff-add-symbol);
+						}
+					}
+
+					& .diff.remove {
+						background-color: var(--code-diff-remove-highlight);
+						opacity: 0.9;
+
+						& [data-line-code-wrapper]::before {
+							content: '--';
+							position: absolute;
+							width: 2rem;
+							color: var(--code-diff-remove-symbol);
+						}
+					}
+
+					& .highlighted.error {
+						background-color: var(--code-line-error);
+						opacity: 0.9;
+					}
+
+					& .highlighted.warning {
+						background-color: var(--code-line-warning);
+						opacity: 0.9;
 					}
 				}
 
-				& .diff.remove {
-					background-color: var(--code-diff-remove-highlight);
-					opacity: 0.9;
-
-					& [data-line-code-wrapper]::before {
-						content: '--';
-						position: absolute;
-						width: 2rem;
-						color: var(--code-diff-remove-symbol);
+				& code[data-line-number-max-digits="1"] {
+					& span.diff.add [data-line-code-wrapper]::before,
+					& span.diff.remove [data-line-code-wrapper]::before {
+						left: 1.5rem;
 					}
 				}
 
-				& .highlighted.error {
-					background-color: var(--code-line-error);
-					opacity: 0.9;
+				& code[data-line-number-max-digits="2"] {
+					& span.diff.add [data-line-code-wrapper]::before,
+					& span.diff.remove [data-line-code-wrapper]::before {
+						left: 2.25rem;
+					}
 				}
 
-				& .highlighted.warning {
-					background-color: var(--code-line-warning);
-					opacity: 0.9;
+				& code[data-line-number-max-digits="3"] {
+					& span.diff.add [data-line-code-wrapper]::before,
+					& span.diff.remove [data-line-code-wrapper]::before {
+						left: 3rem;
+					}
+				}
+
+				& code[data-line-number-max-digits="4"] {
+					& span.diff.add [data-line-code-wrapper]::before,
+					& span.diff.remove [data-line-code-wrapper]::before {
+						left: 3.75rem;
+					}
+				}
+
+				& span.line {
+					display: flex;
+					position: relative;
+					white-space : pre-wrap !important;
+
+					&[data-highlighted-line] {
+						@media (prefers-color-scheme: light) {
+							background-color: var(--shiki-highlighted-light-bg);
+						}
+
+						@media (prefers-color-scheme: dark) {
+							background-color: var(--shiki-highlighted-dark-bg);
+						}
+					}
+
+					& span[data-line-number] {
+						width: 0.5rem;
+						height: 100%;
+						display: inline-block;
+						text-align: right;
+						vertical-align: top;
+						padding-right: 7px;
+						float: left;
+						flex-grow: 0;
+						flex-shrink: 0;
+
+						@media (prefers-color-scheme: light) {
+							border-right: 1px solid var(--shiki-lineno-light);
+							color: var(--shiki-lineno-light);
+						}
+
+						@media (prefers-color-scheme: dark) {
+							border-right: 1px solid var(--shiki-lineno-dark);
+							color: var(--shiki-lineno-dark);
+						}
+
+						[data-line-number-max-digits="2"] & {
+							width:1.25rem;
+						}
+
+						[data-line-number-max-digits="3"] & {
+							width:2rem;
+						}
+
+						[data-line-number-max-digits="4"] & {
+							width:2.75rem;
+						}
+					}
+
+					& span[data-line-code-wrapper] {
+						display: inline-block;
+						vertical-align: top;
+						height: 100%;
+						padding-left: 2rem;
+						text-wrap: wrap;
+
+						& [data-line-tab], & [data-line-space] {
+							position: relative;
+						}
+
+						& [data-line-tab]::before {
+							content: '⇥';
+							position: absolute;
+							opacity: 0.3;
+						}
+
+						& [data-line-space]::before {
+							content: '·';
+							position: absolute;
+							opacity: 0.3;
+						}
+					}
 				}
 			}
-
-			& code[data-line-number-max-digits="1"] {
-				& span.diff.add [data-line-code-wrapper]::before,
-				& span.diff.remove [data-line-code-wrapper]::before {
-					left: 1.5rem;
-				}
-			}
-
-			& code[data-line-number-max-digits="2"] {
-				& span.diff.add [data-line-code-wrapper]::before,
-				& span.diff.remove [data-line-code-wrapper]::before {
-					left: 2.25rem;
-				}
-			}
-
-			& code[data-line-number-max-digits="3"] {
-				& span.diff.add [data-line-code-wrapper]::before,
-				& span.diff.remove [data-line-code-wrapper]::before {
-					left: 3rem;
-				}
-			}
-
-			& code[data-line-number-max-digits="4"] {
-				& span.diff.add [data-line-code-wrapper]::before,
-				& span.diff.remove [data-line-code-wrapper]::before {
-					left: 3.75rem;
-				}
-			}
-
-			& span.line {
-				position: relative;
-				white-space : pre-wrap !important;
-
-				& [data-line-code-wrapper] {
-					padding-left: 2rem;
-				}
-
-				&[data-highlighted-line] {
-					@media (prefers-color-scheme: light) {
-						background-color: var(--shiki-highlighted-light-bg);
-					}
-
-					@media (prefers-color-scheme: dark) {
-						background-color: var(--shiki-highlighted-dark-bg);
-					}
-				}
-
-				& span {
-
-					&[data-line-tab], &[data-line-space] {
-						position: relative;
-					}
-
-					&[data-line-tab]::before {
-						content: '⇥';
-						position: absolute;
-						opacity: 0.3;
-					}
-
-					&[data-line-space]::before {
-						content: '·';
-						position: absolute;
-						opacity: 0.3;
-					}
-
-					@media (prefers-color-scheme: light) {
-						color: var(--shiki-light);
-						font-style: var(--shiki-light-font-style);
-						font-weight: var(--shiki-light-font-weight);
-						text-decoration: var(--shiki-light-text-decoration);
-					}
-
-					@media (prefers-color-scheme: dark) {
-						color: var(--shiki-dark);
-						font-style: var(--shiki-dark-font-style);
-						font-weight: var(--shiki-dark-font-weight);
-						text-decoration: var(--shiki-dark-text-decoration);
-					}
-				}
-			}
-		}
-
-		.astro-code code { 
-			display: grid;
-			
-			& span[data-line-number] {
-				width: 0.5rem;
-				display: inline-block;
-				text-align: right;
-				padding-right: 7px;
-
-				@media (prefers-color-scheme: light) {
-					border-right: 1px solid var(--shiki-lineno-light);
-					color: var(--shiki-lineno-light);
-				}
-
-				@media (prefers-color-scheme: dark) {
-					border-right: 1px solid var(--shiki-lineno-dark);
-					color: var(--shiki-lineno-dark);
-				}
-
-				[data-line-number-max-digits="2"] & {
-					width:1.25rem;
-				}
-
-				[data-line-number-max-digits="3"] & {
-					width:2rem;
-				}
-
-				[data-line-number-max-digits="4"] & {
-					width:2.75rem;
-				}
-			}
-
 		}
 
 		figure + p:has(cite) {
