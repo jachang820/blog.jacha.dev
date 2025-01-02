@@ -1,0 +1,50 @@
+---
+import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
+import { type CollectionEntry, getCollection } from 'astro:content';
+import Base from '../../../../layouts/Base.astro';
+import BlogList from '../../../../layouts/BlogList.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../../../consts';
+import { sortByDateDesc } from '../../../../helpers';
+
+type BlogPost = CollectionEntry<'blog'>;
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const posts = (await getCollection('blog')).sort(sortByDateDesc);
+    const dates = new Map<string, BlogPost[]>();
+    const dateKeys: string[] = [];
+    posts.forEach((post) => {
+        const postDate = post.data.updatedDate ?? post.data.pubDate;
+        const postYear = postDate.getUTCFullYear();
+        const postMonth = postDate.getUTCMonth() + 1;
+        const key = `${postMonth}/${postYear}`;
+        if (!dates.has(key)) {
+            dates.set(key, [post]);
+            dateKeys.push(key);
+        }
+        else {
+            dates.get(key)?.push(post);
+        }
+    });
+
+    return dateKeys.flatMap((yearAndMonth) => {
+        const [month, year] = yearAndMonth.split('/');
+        const filteredPosts = dates.get(yearAndMonth)!;
+        return paginate(filteredPosts, {
+            params: { year, month },
+            pageSize: 10
+        });
+    });
+}) satisfies GetStaticPaths;
+
+type Params = { year: string, month: string };
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { year, month } = Astro.params as Params;
+const { page } = Astro.props;
+const description = SITE_DESCRIPTION + ` Posts from ${month}/${year}.`;
+
+---
+
+<Base title={SITE_TITLE} {description}>
+	<BlogList {page} {Number(year)} {Number(month) - 1} />
+</Base>

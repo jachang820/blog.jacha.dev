@@ -1,24 +1,32 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
 import BlogPost from '../../layouts/BlogPost.astro';
 import { render } from 'astro:content';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
 	return posts.map((post) => ({
-		params: { slug: post.id },
+		params: { id: post.id },
 		props: post,
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
+interface BlogTitle {
+	title: string;
+	description: string;
+}
+
+type Props = CollectionEntry<'blog'> & BlogTitle;
+
+const { title, description, ...post } = Astro.props;
 const { Content } = await render(post);
 ---
-
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<Base title={title} description={description}>
+	<BlogPost {...post.data}>
+		<Content />
+	</BlogPost>
+</Base>
 
 <style is:global>
 	@layer specifics {
@@ -269,7 +277,7 @@ const { Content } = await render(post);
 						text-wrap: wrap;
 						text-indent: 1.5em hanging;
 					}
-
+ 
 					& span[data-line-code-pre-ws],
 					& span[data-line-code-wrapper] {
 						display: inline-block;
@@ -296,7 +304,7 @@ const { Content } = await render(post);
 			}
 		}
 
-		figure + p:has(cite) {
+		figure[data-code-block-figure] + p:has(cite) {
 			margin-top: 0;
 			margin-left: 1.5rem;
 			margin-right: 1.5rem;
@@ -310,7 +318,7 @@ const { Content } = await render(post);
 			}
 		}
 
-		p img {
+		.prose > p img {
 			display: block;
 		}
 
@@ -325,7 +333,7 @@ const { Content } = await render(post);
 			}
 		}
 
-		blockquote {
+		.prose > blockquote {
 			position: relative;
 			font-size: 1.1em;
 			margin-left: 1.5em;

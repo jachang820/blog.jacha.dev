@@ -1,0 +1,85 @@
+---
+import { xxHash32 } from 'js-xxhash';
+const initialSeed = 12;
+
+interface Props {
+    name: string;
+    hue?: number;
+    seed?: number;
+}
+
+let {name, hue, seed = initialSeed} = Astro.props;
+const nameLower = name.toLowerCase();
+
+if (!hue) {
+    const hashNum = xxHash32(nameLower, seed);
+    hue = hashNum % 360;
+}
+
+const hslLight = `hsl(${hue}deg 40% 70%)`;
+const hslLightMouseover = `hsl(${hue}deg 50% 80%)`;
+const hslDark = `hsl(${hue}deg 50% 45%)`;
+const hslDarkMouseover = `hsl(${hue}deg 60% 35%)`;
+---
+
+<a href=`/blog/tag/${nameLower}`>
+    <span style=`--tag-color-light: ${hslLight}; 
+                --tag-color-light-mouseover: ${hslLightMouseover};
+                --tag-color-dark: ${hslDark};
+                --tag-color-dark-mouseover: ${hslDarkMouseover}`>
+        {nameLower}
+    </span>
+</a>
+
+<style>
+    @layer specifics {
+        :global(h1) a {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        :global(h1) span {
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            vertical-align: middle;
+            margin: 0 1rem;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        span {
+            border-radius: 10px;
+            padding: 4px 10px;
+            font-size: 1.1rem;
+            font-weight: normal;
+            line-height: 1.7;
+            transition: 0.5s ease;
+
+            @media (prefers-color-scheme: light) {
+                color: #333;
+                background-color: var(--tag-color-light);
+            }
+            @media (prefers-color-scheme: dark) {
+                color: whitesmoke;
+                background-color: var(--tag-color-dark);
+            }
+
+            &:hover {
+                @media (prefers-color-scheme: light) {
+                    background-color: var(--tag-color-light-mouseover);
+                }
+                @media (prefers-color-scheme: dark) {
+                    color: whitesmoke;
+                    background-color: var(--tag-color-dark-mouseover);
+                }
+            }
+
+            &:active {
+                padding: 6px 12px;
+            }
+        }
+    }
+</style>

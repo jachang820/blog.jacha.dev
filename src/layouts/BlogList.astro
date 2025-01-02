@@ -1,0 +1,178 @@
+---
+import type { Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+import TagList from '../components/TagList.astro';
+import Tag from '../components/Tag.astro';
+
+interface Props {
+    page: Page<CollectionEntry<'blog'>>;
+    tag?: string;
+    year?: number;
+    month?: number;
+}
+
+const { page, tag, year, month } = Astro.props;
+
+const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June', 'July', 
+    'August', 'September', 'October', 'November', 'December'
+];
+
+const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefined;
+
+---
+
+<section>
+    {
+        (tag && (
+            <h1>Posts about <Tag name={tag!} /></h1>
+        )) ||
+        ( year && month && (
+            <h1>Posts from {monthAndYear}</h1>
+        )) ||
+        <h1>Latest posts</h1>
+    }
+    <ul>
+        {
+            page.data.map((post) => (
+                <li>
+                    <a href={`/blog/${post.id}/`}>
+                        <h4 class="title">{post.data.title}</h4>
+                        <p class="date">
+                            | <FormattedDate date={post.data.pubDate} />
+                            {
+                                post.data.updatedDate && (
+                                    <>
+                                       [ Updated: <FormattedDate date={post.data.updatedDate} /> ]
+                                    </>
+                                )
+                            }
+                        </p>
+                    </a>
+                    <p class="description">
+                        { post.data.description }
+                    </p>
+                    
+                    { 
+                        post.data.tags && (
+                            <div class="tags">
+                                <TagList tags={post.data.tags} />
+                            </div>
+                        ) 
+                    }
+                    
+                </li>
+            ))
+        }
+    </ul>
+    <div class="pagination">
+        {
+            page.url.prev && (
+                <a href={page.url.prev}>
+                    <button>Prev</button>
+                </a>
+            )
+        }
+        {
+            page.url.next && (
+                <a href={page.url.next}>
+                    <button>Next</button>
+                </a>
+            )
+        }
+    </div>
+</section>
+
+<style>
+    @layer override {
+        & .tags :global(div) {
+            justify-content: flex-start;
+        }
+    }
+
+    @layer layout {
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            list-style-type: none;
+            margin: 0 1rem;
+            padding: 0;
+
+            & li {
+                width: calc(100% - 1rem);
+                padding: 1rem;
+                border-radius: 1rem;
+                border: 1px solid rgb(168, 155, 180);
+
+                & * {
+                    text-decoration: none;
+                    transition: 0.2s ease;
+                }
+
+                & a {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: flex-start;
+                    gap: 1rem;
+
+                    &:hover h4, &:hover .date {
+                        color: inherit;
+                    }
+                }
+
+                & .title {
+                    display: inline-block;
+                    margin: 0;
+                    line-height: 1;
+                }
+                & .date {
+                    margin: 0;
+                    color: rgb(var(--gray));
+                }
+
+                & .description {
+                    margin-top: 0.25rem;
+                    margin-bottom: 1rem;
+
+                    @media (prefers-color-scheme: light) {
+                        color: #333;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                        color: #ebebeb;
+                    }
+                }
+
+                & .tags {
+                    padding-left: 2rem;
+                }
+            }
+        }
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+
+            & button {
+                padding: 0.4rem 1rem;
+            }
+
+        }
+        @media (max-width: 720px) {
+            ul {
+                gap: 0.5em;
+            }
+            ul li {
+                width: 100%;
+                text-align: center;
+            }
+            ul li:first-child {
+                margin-bottom: 0;
+            }
+            ul li:first-child .title {
+                font-size: 1.563em;
+            }
+        }
+    }
+</style>

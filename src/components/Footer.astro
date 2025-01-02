@@ -4,7 +4,6 @@ const name = 'Jonathan Chang';
 ---
 
 <footer>
-	<hr>
 	&copy; {today.getFullYear()} {name}. All rights reserved.
 	<div class="social-links">
 		<a href="https://m.webtoo.ls/@astro" target="_blank">
@@ -44,37 +43,36 @@ const name = 'Jonathan Chang';
 <style>
 	@layer layout {
 		footer {
-			padding: 0 1em 6em 1em;
+			--footer-color-light: #e7e0ee;
+			--footer-color-dark: #181d24;
+			margin-top: auto;
+			padding: 2em 1em 6em 1em;
 			text-align: center;
-		}
-		footer hr {
-			width: 600px;
-			height: 1px;
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 2em;
 
 			@media (prefers-color-scheme: light) {
-				background-color: rgb(var(--gray-dark));
+				background-color: var(--footer-color-light);
 			}
 			@media (prefers-color-scheme: dark) {
-				background-color: rgb(var(--gray-light));
+				background-color: var(--footer-color-dark);
 			}
-			
-			border: none;
 		}
 		.social-links {
 			display: flex;
 			justify-content: center;
 			gap: 1em;
-			margin-top: 1em;
+			margin-top: 3em;
 		}
 		.social-links a {
 			text-decoration: none;
 			color: rgb(var(--gray));
 		}
 		.social-links a:hover {
-			color: rgb(var(--gray-dark));
+			@media (prefers-color-scheme: light) {
+				color: rgb(var(--gray-dark));
+			}
+			@media (prefers-color-scheme: dark) {
+				color: rgb(var(--gray-light));
+			}
 		}
 	}
 </style>

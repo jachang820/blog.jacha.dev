@@ -1,0 +1,32 @@
+---
+import Tag from '../components/Tag.astro';
+
+interface Props {
+    tags: string[]
+}
+
+const { tags } = Astro.props;
+
+---
+
+<div class="tag-list">
+    {
+        tags?.map((tag) => (
+            <Tag name={tag} />
+        ))
+    }
+</div>
+
+<style>
+    @layer specifics {
+        .tag-list {
+            display: flex;
+            flex-direction: row;
+            padding: 1rem;
+            flex-wrap: wrap;
+            gap: 5px 8px;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+</style>

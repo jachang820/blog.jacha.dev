@@ -2,7 +2,7 @@
 title: 'Code 2'
 description: 'Testing'
 pubDate: 'Jul 09 2024'
-heroImage: '/blog-placeholder-3.jpg'
+tags: ['AWS', 'Python', 'Markdown']
 ---
 
 ```svelte meta="---"

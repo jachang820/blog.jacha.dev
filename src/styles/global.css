@@ -4,7 +4,7 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
- @layer default, layout, specifics;
+ @layer default, layout, specifics, override;
 
  @layer default {
 	:root {
@@ -35,6 +35,9 @@
 		font-display: swap;
 	}
 	body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
 		font-family: 'Atkinson', sans-serif;
 		margin: 0;
 		padding: 0;
@@ -54,13 +57,12 @@
 			background-color: rgb(var(--gray-dark));
 			color: whitesmoke;
 		}
+
+		.content-wrapper {
+			display: block;
+		}
 	}
-	main {
-		width: 720px;
-		max-width: calc(100% - 2em);
-		margin: auto;
-		padding: 3em 1em;
-	}
+
 	h1,
 	h2,
 	h3,

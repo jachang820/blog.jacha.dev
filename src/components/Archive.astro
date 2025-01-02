@@ -1,0 +1,84 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import { getUniqueMonths, sortByDateDesc } from '../helpers';
+import { number } from 'astro:schema';
+
+type BlogPost = CollectionEntry<'blog'>;
+
+const posts = (await getCollection('blog')).sort(sortByDateDesc);
+const dates = getUniqueMonths(posts);
+
+type PostsMap = Map<number, Set<number>>;
+
+const postsByYear: PostsMap = new Map();
+
+posts.forEach((post) => {
+    const postDate = post.data.updatedDate ?? post.data.pubDate;
+    const postMonth = postDate.getUTCMonth();
+    const postYear = postDate.getUTCFullYear();
+    if (!postsByYear.has(postYear)) {
+        postsByYear.set(postYear, new Set([postMonth]));
+    }
+    else {
+        postsByYear.get(postYear)?.add(postMonth);
+    }
+});
+
+const years: number[] = Array.from(postsByYear.keys());
+
+const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June', 'July', 
+    'August', 'September', 'October', 'November', 'December'
+];
+---
+
+<section>
+    <h2>Archives</h2>
+    {
+        years.length && (
+            <details open>
+                <summary>{years[0]}</summary>
+                <ul>
+                    {
+                        Array.from(postsByYear.get(years[0])!).map((month) => (
+                            <li>
+                                <a href={`/blog/${years[0]}/${month + 1}`}>
+                                    {monthNames[month]}, {years[0]}
+                                </a>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </details>
+        )
+    }
+    {
+        years.slice(1).map((year) => (
+            <details>
+                <summary>{year}</summary>
+                <ul>
+                    {
+                        Array.from(postsByYear.get(year)!).map((month) => (
+                            <li>
+                                <a href={`/blog/${year}/${month + 1}`}>
+                                    {monthNames[month]}, {year}
+                                </a>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </details>
+        ))
+    }
+</section>
+
+<style>
+    section {
+        display: inline-block;
+        width: 100%;
+
+        h2 {
+            font-size: 2em;
+        }
+    }
+</style>

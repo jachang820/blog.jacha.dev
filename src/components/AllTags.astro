@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import TagList from './TagList.astro';
+import { getUniqueTags } from '../helpers';
+
+const posts = await getCollection('blog');
+const blogTags = getUniqueTags(posts);
+---
+
+<section>
+    <h2>Tags</h2>
+    <TagList tags={blogTags} />
+</section>
+
+<style>
+    section {
+        display: inline-block;
+        width: 100%;
+
+        h2 {
+            font-size: 2em;
+        }
+    }
+</style>
