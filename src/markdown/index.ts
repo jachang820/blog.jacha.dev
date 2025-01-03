@@ -1,4 +1,4 @@
-import type { ShikiConfig } from 'astro';
+import type { ShikiConfig, AstroUserConfig } from 'astro';
 
 import { 
     transformerNotationDiff,
@@ -11,7 +11,9 @@ import metaLineNumberTransform from './transforms/linenumber';
 import metaFigureTransform from './transforms/figure';
 import renderWhitespaceTransform from './transforms/whitespace';
 
-const config: Partial<ShikiConfig> = {
+import highlightInlineCode from './inline-code';
+
+const shikiConfig: Partial<ShikiConfig> = {
     themes: {
         light: 'github-light-default',
         dark: 'github-dark-dimmed',
@@ -26,6 +28,13 @@ const config: Partial<ShikiConfig> = {
         metaLineNumberTransform(),
         metaFigureTransform()
     ]
+};
+
+const config: AstroUserConfig['markdown'] = {
+    shikiConfig: shikiConfig,
+    rehypePlugins: [
+        highlightInlineCode
+    ],
 };
 
 export default config;

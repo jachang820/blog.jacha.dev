@@ -12,7 +12,7 @@ import {
 } from 'shiki';
 import type { Element, Text, Root } from 'hast';
 import { visit } from 'unist-util-visit';
-import config from '../shiki-config';
+import config from '.';
 
 interface InlineCodeInstance {
     node: Element,
