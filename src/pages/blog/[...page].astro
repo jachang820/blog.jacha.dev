@@ -9,7 +9,7 @@ import { sortByDateDesc } from '../../helpers';
 type BlogPost = CollectionEntry<'blog'>;
 
 export const getStaticPaths = (async ({ paginate }) => {
-	const posts = (await getCollection('blog')).sort(sortByDateDesc);
+	const posts: BlogPost[] = (await getCollection('blog')).sort(sortByDateDesc);
 	return paginate(posts, {
 		pageSize: 10
 	});

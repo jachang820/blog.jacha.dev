@@ -1,12 +1,8 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
-import { getUniqueMonths, sortByDateDesc } from '../helpers';
-import { number } from 'astro:schema';
-
-type BlogPost = CollectionEntry<'blog'>;
+import { getCollection } from 'astro:content';
+import { sortByDateDesc } from '../helpers';
 
 const posts = (await getCollection('blog')).sort(sortByDateDesc);
-const dates = getUniqueMonths(posts);
 
 type PostsMap = Map<number, Set<number>>;
 

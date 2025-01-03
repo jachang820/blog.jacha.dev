@@ -1,12 +1,12 @@
 ---
 
-import Search from 'astro-pagefind/components/Search';
 import BaseHead from '../components/BaseHead.astro';
 import Tags from '../components/AllTags.astro';
 import Archive from '../components/Archive.astro';
 import Footer from '../components/Footer.astro';
+// import PageFind from '../components/PageFind.astro';
 
-interface BlogTitle {
+interface Props {
 	title: string;
 	description: string;
 }
@@ -20,7 +20,7 @@ const { title, description } = Astro.props;
 		<BaseHead {title} {description} />
 	</head>
 	<body>
-        <Search id="search" className="pagefind-ui" uiOptions={{ showImages: false }} />
+        <!-- <PageFind /> -->
         <div class="content-wrapper">
             <main>
                 <slot />

@@ -17,7 +17,7 @@ const transform = (): ShikiTransformer => {
 
     return {
         name: 'devblog-transformers:meta-tab-size',
-        line(node, line) {
+        line(node, _) {
             // Find relevant data from options meta
             const tabSizeMeta = parseMeta(this.options, tabSizeCommand);
 

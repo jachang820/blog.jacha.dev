@@ -23,7 +23,8 @@ const hslDarkMouseover = `hsl(${hue}deg 60% 35%)`;
 ---
 
 <a href=`/blog/tag/${nameLower}`>
-    <span style=`--tag-color-light: ${hslLight}; 
+    <span data-pagefind-filter="tag" 
+          style=`--tag-color-light: ${hslLight}; 
                 --tag-color-light-mouseover: ${hslLightMouseover};
                 --tag-color-dark: ${hslDark};
                 --tag-color-dark-mouseover: ${hslDarkMouseover}`>

@@ -11,7 +11,7 @@ const { title, tags, pubDate, updatedDate } = Astro.props;
 
 <article>
 	<div class="title">
-		<h1>{title}</h1>
+		<h1 data-pagefind-body data-pagefind-weight="3">{title}</h1>
 		<div class="date">
 			<FormattedDate date={pubDate} />
 			{
@@ -22,10 +22,12 @@ const { title, tags, pubDate, updatedDate } = Astro.props;
 				)
 			}
 		</div>
-		{ tags && <TagList {tags} /> }
+        <div class="article-tags" data-pagefind-body data-pagefind-weight="4">
+		    { tags && <TagList {tags} /> }
+        </div>
 		<hr />
 	</div>
-	<div class="prose">
+	<div class="prose" data-pagefind-body data-pagefind-weight="1">
 		<slot />
 	</div>
 </article>

@@ -1,4 +1,4 @@
-import { type ShikiTransformer, addClassToHast } from 'shiki';
+import { type ShikiTransformer } from 'shiki';
 import type { Element, ElementContent } from 'hast';
 
 import { parseMeta, isLine } from './utils';

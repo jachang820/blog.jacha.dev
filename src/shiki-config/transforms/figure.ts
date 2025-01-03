@@ -1,5 +1,5 @@
 import type { ShikiTransformer } from 'shiki';
-import type { Element, Text } from 'hast';
+import type { Element } from 'hast';
 
 import { parseMeta, alterRGB } from './utils';
 
@@ -38,11 +38,12 @@ const transform = (): ShikiTransformer => {
             const pre = node.children[0] as Element;
             const lang = pre.properties['dataLanguage'] as string;
             pre.properties['data-block-code'] = '';
+            pre.properties['data-pagefind-ignore'] = 'all'; // Ignore code for search
             pre.properties['style'] = pre.properties['style'] + ' overflow-y: hidden;';
 
             // Get secondary theme colors
             const figcaptionStylesArray: string[] = [];
-            const preStyles = pre.properties['style'].split(';').forEach((style) => {
+            pre.properties['style'].split(';').forEach((style) => {
                 const [key, value] = style.trim().split(':');
                 if (key.startsWith('--')) {
                     const figcaptionKey = key.replace('shiki', 'shiki-caption');

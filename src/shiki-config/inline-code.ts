@@ -64,7 +64,7 @@ const highlightInlineCode = () => {
 
         // Retrieve all instances of inline code in document
         visit(tree, 'element', (node: Element, 
-                                index: number | undefined, 
+                                _: number | undefined, 
                                 parent: Element | Root | undefined) => {
 
             if (isInlineCode(node, parent)) {
@@ -99,16 +99,7 @@ const highlightInlineCode = () => {
             preClasses = preClasses.replaceAll('shiki', 'astro-code');
             newPre.properties['class'] = preClasses;
             newPre.properties['data-inline-code'] = '';
-
-            // Create span to keep markdown processing inline
-            const span: Element = {
-                type: 'element',
-                tagName: 'span',
-                properties: {
-                    'data-inline-wrap': ''
-                },
-                children: [newPre]
-            };
+            newPre.properties['data-pagefind-ignore'] = 'all'; //Ignore code from search results
 
             // Replace original element
             instance.node.properties = newPre.properties;
