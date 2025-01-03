@@ -52,9 +52,11 @@ const regexp = /^(.+){:(\w+)}$/;
 
 const highlightInlineCode = () => {
 
+    const shikiThemes = config.shikiConfig!.themes!;
+
     const cachedHighlighter = getSingletonHighlighterCore({
         langs: [resolveLanguage('plaintext')], 
-        themes: Object.values(config.themes!).map(resolveTheme)
+        themes: Object.values(shikiThemes).map(resolveTheme)
     });
 
     return async (tree: Root) => {
@@ -64,7 +66,7 @@ const highlightInlineCode = () => {
 
         // Retrieve all instances of inline code in document
         visit(tree, 'element', (node: Element, 
-                                _: number | undefined, 
+                                _: number | undefined, // index
                                 parent: Element | Root | undefined) => {
 
             if (isInlineCode(node, parent)) {
@@ -88,7 +90,7 @@ const highlightInlineCode = () => {
             // Syntax highlighted structure
             const newParent = highlighter.codeToHast(instance.code, {
                 lang: instance.language, 
-                themes: config.themes!,
+                themes: shikiThemes,
                 defaultColor: false
             });
             const newPre = newParent.children[0] as Element;

@@ -13,6 +13,8 @@ import renderWhitespaceTransform from './transforms/whitespace';
 
 import highlightInlineCode from './inline-code';
 
+type MarkdownConfig = NonNullable<AstroUserConfig['markdown']>;
+
 const shikiConfig: Partial<ShikiConfig> = {
     themes: {
         light: 'github-light-default',
@@ -30,11 +32,11 @@ const shikiConfig: Partial<ShikiConfig> = {
     ]
 };
 
-const config: AstroUserConfig['markdown'] = {
+const config: Partial<MarkdownConfig> = {
     shikiConfig: shikiConfig,
     rehypePlugins: [
         highlightInlineCode
-    ],
+    ]
 };
 
 export default config;

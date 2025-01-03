@@ -1,17 +1,17 @@
 ---
+import '@pagefind/default-ui/css/ui.css';
 
-import PageFindHead from '../components/PageFindHead.astro';
 ---
 
-<PageFindHead />
 
 <div id="search" transition:persist=""></div>
 <script>
-  window.addEventListener("DOMContentLoaded", () => {
-    new PagefindUI({ 
-        element: "#search",
-        showImages: true,
-        showEmptyFilters: false
+    import { PagefindUI } from '@pagefind/default-ui';
+    window.addEventListener("DOMContentLoaded", () => {
+        new PagefindUI({ 
+            element: "#search",
+            showImages: true,
+            showEmptyFilters: false
+        });
     });
-  });
 </script>
