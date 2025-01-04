@@ -26,31 +26,16 @@ const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June', 'July', 
     'August', 'September', 'October', 'November', 'December'
 ];
+
+const open = true;
+
 ---
 
 <section>
     <h2>Archives</h2>
     {
-        years.length && (
-            <details open>
-                <summary>{years[0]}</summary>
-                <ul>
-                    {
-                        Array.from(postsByYear.get(years[0])!).map((month) => (
-                            <li>
-                                <a href={`/blog/${years[0]}/${month + 1}`}>
-                                    {monthNames[month]}, {years[0]}
-                                </a>
-                            </li>
-                        ))
-                    }
-                </ul>
-            </details>
-        )
-    }
-    {
-        years.slice(1).map((year) => (
-            <details>
+        years.map((year, index) => (
+            <details open={ index === 0 && open }>
                 <summary>{year}</summary>
                 <ul>
                     {

@@ -3,11 +3,12 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import BlogPost from '../../layouts/BlogPost.astro';
 import { render } from 'astro:content';
+import { slugifyPost } from '../../helpers';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
 	return posts.map((post) => ({
-		params: { id: post.id },
+		params: { id: slugifyPost(post) },
 		props: post,
 	}));
 }
