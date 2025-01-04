@@ -29,15 +29,22 @@ const { title, description } = Astro.props;
         <div class="site-title">
             <BlogName scale={1.5} />
         </div>
-        <!-- <PageFind /> -->
+        <!-- <div class="search-wrapper">
+            <PageFind />
+        </div> -->
         <div class="content-wrapper">
             <main>
                 <slot />
             </main>
             <aside>
-                <div class="aside-wrapper">
-                    <Tags />
-                    <Archive />
+                <div class="aside-scroll-wrapper">
+                    <div class="aside-wrapper">
+                        <div class="search-wrapper">
+                            <PageFind />
+                        </div>
+                        <Tags />
+                        <Archive />
+                    </div>
                 </div>
             </aside>
         </div>
@@ -86,8 +93,19 @@ const { title, description } = Astro.props;
             }
 
             @media (max-width: 1200px) {
-                & ~ .content-wrapper aside {
+                & ~ .content-wrapper aside, & ~ .search-wrapper {
                     display: none;
+                }
+
+                &[open] ~ .search-wrapper {
+                    /* display: block;
+                    position: relative;
+                    left: 25%;
+                    width: 50%; */
+                    display: block;
+                    width: 50%;
+                    margin: -1.5rem auto 2rem auto;
+                    z-index: 200;
                 }
 
                 &[open] ~ .content-wrapper aside {
@@ -97,8 +115,6 @@ const { title, description } = Astro.props;
                     top: 0;
                     right: 0;
                     bottom: 0;
-                    padding: 2rem;
-                    padding-top: 5rem;
                     
                     @media (prefers-color-scheme: light) {
                         background-color: rgb(var(--gray-light));
@@ -107,14 +123,22 @@ const { title, description } = Astro.props;
                         background-color: rgb(var(--gray-dark));
                     }
 
-                    & .aside-wrapper {
-                        width: 50%;
-                        margin: 0 auto;
+                    & .aside-scroll-wrapper {
+                        position: relative;
+                        width: 100%;
+                        padding-top: 4rem;
+                        height: calc(100vh - 10rem);
+                        overflow-y: auto;
                     }
 
-                    & :global(section) {
-                        margin-top: 2rem;
-                    }  
+                    & .aside-wrapper {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2rem;
+                        position: relative;
+                        width: 50%;
+                        margin: 3rem auto 10rem auto;
+                    }
                 }
             }
         }
@@ -144,7 +168,7 @@ const { title, description } = Astro.props;
                 @media (min-width: 1200px) {
                     max-width: 1024px;
                     flex-shrink: 0;
-                    flex-grow: 0.7;
+                    flex-grow: 0.6;
                 }
             }
 
@@ -152,7 +176,9 @@ const { title, description } = Astro.props;
                 & aside {
                     display: inline-block;
                     position: relative;
-                    padding: 0 1.5rem 3rem 1.5rem;
+                    padding: 0 5rem 3rem 1.5rem;
+                    flex-shrink: 0;
+                    flex-grow: 0.4;
 
                     & .aside-wrapper {
                         display: flex;
@@ -160,8 +186,18 @@ const { title, description } = Astro.props;
                         gap: 2rem;
                         justify-content: flex-start;
                         align-items: center;
-                        flex-shrink: 0;
-                        flex-grow: 0.3;
+
+                        & .search-wrapper {
+                            width: 100%;
+                            max-width: 28vw;
+                            padding: 0;
+                            margin-top: 2rem;
+
+                            & :global(#search) {
+                                max-width: 28vw;
+                                margin: 0;
+                            }
+                        }
                     }
                 }
             }

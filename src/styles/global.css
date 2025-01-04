@@ -37,7 +37,7 @@
 	body {
 		display: flex;
 		flex-direction: column;
-		min-height: 100vh;
+		height: 100vh;
 		font-family: 'Atkinson', sans-serif;
 		margin: 0;
 		padding: 0;
