@@ -1,0 +1,175 @@
+---
+interface Props {
+    position: 'fixed' | 'sticky' | 'absolute' | 'relative';
+    left?: string;
+    top?: string;
+    right?: string;
+    bottom?: string;
+}
+
+const { position, left, top, right, bottom } = Astro.props;
+
+let styles: string[] = [`position: ${position};`]
+if (left) {
+    styles.push(`left: ${left};`);
+}
+if (top) {
+    styles.push(`top: ${top};`);
+}
+if (right) {
+    styles.push(`right: ${right};`);
+}
+if (bottom) {
+    styles.push(`bottom: ${bottom};`);
+}
+
+const locationStyles: string = styles.join(' ');
+
+---
+<details class="hamburger" style={locationStyles}>
+    <summary class="button">
+        <div class="icon-left"></div>
+        <div class="icon-right"></div>
+    </summary>
+</details>
+
+<style>
+    @layer specifics {
+        .hamburger {
+            --hamburger-color-light: #4c95ac;
+            --hamburger-color-light-open: #4b6b75;
+            --hamburger-color-dark: #c7d8dd;
+            --hamburger-color-dark-open: #9fb0b6;
+            --hamburger-line-thickness: 6px;
+            --hamburger-half-dim: calc(2.5 * var(--hamburger-line-thickness));
+            --hamburger-full-dim: calc(5 * var(--hamburger-line-thickness));
+            --hamburger-middle-start: calc(2 * var(--hamburger-line-thickness));
+            display: inline-block;
+            width: var(--hamburger-full-dim);
+            height: var(--hamburger-full-dim);
+            z-index: 200;
+
+            & .button {
+                position: absolute;
+                width: var(--hamburger-full-dim);
+                height: var(--hamburger-full-dim);
+                top: 0;
+                left: 0;
+                transition-duration: 0.5s;
+                box-sizing: border-box;
+                list-style: none;
+                
+                &::marker {
+                    content: '';
+                }
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                & .icon-left, & .icon-left::before, & .icon-left::after,
+                & .icon-right, & .icon-right::before, & .icon-right::after {
+                    @media (prefers-color-scheme: light) {
+                        background-color: var(--hamburger-color-light);
+                    }
+                    @media (prefers-color-scheme: dark) {
+                        background-color: var(--hamburger-color-dark);
+                    }
+                }
+
+                & .icon-left {
+                    transition-duration: 0.5s;
+                    position: absolute;
+                    height: var(--hamburger-line-thickness);
+                    width: var(--hamburger-half-dim);
+                    top: var(--hamburger-middle-start);
+                    left: 0;
+
+                    &::before {
+                        transition-duration: 0.5s;
+                        position: absolute;
+                        width: var(--hamburger-half-dim);
+                        height: var(--hamburger-line-thickness);
+                        content: "";
+                        top: calc(-1 * var(--hamburger-middle-start));
+                    }
+
+                    &::after {
+                        transition-duration: 0.5s;
+                        position: absolute;
+                        width: var(--hamburger-half-dim);
+                        height: var(--hamburger-line-thickness);
+                        content: "";
+                        top: var(--hamburger-middle-start);           
+                    }
+                }
+
+                & .icon-right {
+                    transition-duration: 0.5s;
+                    position: absolute;
+                    height: var(--hamburger-line-thickness);
+                    width: var(--hamburger-half-dim);
+                    top: var(--hamburger-middle-start);
+                    left: var(--hamburger-half-dim);
+
+                    &::before {
+                        transition-duration: 0.5s;
+                        position: absolute;
+                        width: var(--hamburger-half-dim);
+                        height: var(--hamburger-line-thickness);
+                        content: "";
+                        top: calc(-1 * var(--hamburger-middle-start));
+                    }
+
+                    &::after {
+                        transition-duration: 0.5s;
+                        position: absolute;
+                        width: var(--hamburger-half-dim);
+                        height: var(--hamburger-line-thickness);
+                        content: "";
+                        top: var(--hamburger-middle-start); 
+                    }
+                }
+            }
+
+            &[open] .button {
+
+                & .icon-left::before, & .icon-left::after,
+                & .icon-right::before, & .icon-right::after {
+                    @media (prefers-color-scheme: light) {
+                        background-color: var(--hamburger-color-light-open);
+                    }
+                    @media (prefers-color-scheme: dark) {
+                        background-color: var(--hamburger-color-dark-open);
+                    }
+                }
+
+                & .icon-left {
+                    transition-duration: 0.5s;
+                    background: transparent;
+
+                    &::before {
+                        transform: rotateZ(45deg) scaleX(1.4) translate(4px, 4px);
+                    }
+
+                    &::after {
+                        transform: rotateZ(-45deg) scaleX(1.4) translate(4px, -4px);
+                    }
+                }
+
+                & .icon-right {
+                    transition-duration: 0.5s;
+                    background: transparent;
+
+                    &::before {
+                        transform: rotateZ(-45deg) scaleX(1.4) translate(-4px, 4px);
+                    }
+
+                    &::after {
+                        transform: rotateZ(45deg) scaleX(1.4) translate(-4px, -4px);
+                    }
+                }
+            }
+        }
+    }    
+</style>

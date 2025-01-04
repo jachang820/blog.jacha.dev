@@ -84,7 +84,6 @@ const { Content } = await render(post);
 					padding-left: 0.75rem;
 					padding-right: 0.75rem;
 					border-bottom: solid 1px transparent;
-					z-index: 1;
 
 					@media (prefers-color-scheme: light) {
 						color: var(--shiki-light);
@@ -139,8 +138,9 @@ const { Content } = await render(post);
 		}
 
 		.astro-code {
-			padding: 0.25rem;
+			padding-top: 0.25rem;
 			margin: 0;
+			z-index: 5;
 
 			&[data-inline-code] {
 				font-size: 0.9em;

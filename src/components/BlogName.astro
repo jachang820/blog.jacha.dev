@@ -1,0 +1,53 @@
+---
+interface Props {
+    scale?: number;
+}
+
+const { scale = 1 } = Astro.props;
+---
+
+<div class="blog-name" style={`font-size: ${scale}rem;`}>
+    <a href="/">
+        <span class="mrs-saint-delafield-regular">Thoughts</span>
+        <span class="reddit-mono-regular">.toString()</span>
+    </a>
+</div>
+
+<style>
+    @layer specifics {
+        .blog-name a {
+            text-decoration: none;
+
+            @media (prefers-color-scheme: light) {
+                color: black;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                color: white;
+            }
+
+            & .mrs-saint-delafield-regular {
+                font-size: 2.5em;
+                margin-right: -0.1em;
+
+                @media (prefers-color-scheme: light) {
+                    color: #2a617a;
+                }
+                @media (prefers-color-scheme: dark) {
+                    color: #9dd3e0;
+                }
+            }
+
+            & .reddit-mono-regular {
+                font-size: 1.55em;
+
+                @media (prefers-color-scheme: light) {
+                    color: #364a52;
+                }
+                @media (prefers-color-scheme: dark) {
+                    color: #d0dcdf;
+                }
+            }
+        }
+    }
+</style>

@@ -1,6 +1,9 @@
 ---
-
+import MiniNav from '../components/MiniNav.astro';
+import BlogName from '../components/BlogName.astro';
+import Hamburger from '../components/Hamburger.astro';
 import BaseHead from '../components/BaseHead.astro';
+import FontHead from '../components/FontHead.astro';
 import Tags from '../components/AllTags.astro';
 import Archive from '../components/Archive.astro';
 import Footer from '../components/Footer.astro';
@@ -18,16 +21,24 @@ const { title, description } = Astro.props;
 <html lang="en">
 	<head>
 		<BaseHead {title} {description} />
+        <FontHead />
 	</head>
 	<body>
-        <PageFind />
+        <MiniNav />
+        <Hamburger position="fixed" top="10px" right="1rem" />
+        <div class="site-title">
+            <BlogName scale={1.5} />
+        </div>
+        <!-- <PageFind /> -->
         <div class="content-wrapper">
             <main>
                 <slot />
             </main>
             <aside>
-                <Tags />
-                <Archive />
+                <div class="aside-wrapper">
+                    <Tags />
+                    <Archive />
+                </div>
             </aside>
         </div>
 		<Footer />
@@ -35,63 +46,127 @@ const { title, description } = Astro.props;
 </html>
 
 <style>
-    body {
-        overflow-x: hidden;
-    }
-
-    .content-wrapper {
-        display: flex;
-        gap: 5px;
-        width: 100%;
-        padding-top: 3em;
-    }
-
-    main {
-        display: inline-block;
-        width: 100%;
-        max-width: 768px;
-        margin: 0 auto;
-    }
-
-    aside {
-        display: none;
-    }
-
-    @media (min-width: 768px) {
-        main {
-            width: 768px;
+    @layer override {
+        :global(.hamburger) {
+            @media (min-width: 1200px) {
+                display: none;
+            }
         }
     }
 
-    @media (min-width: 1200px) {
+    @layer layout {
+        body {
+            overflow-x: hidden;
+
+            @media (max-width: 1200px) {
+                &:has(.hamburger[open]) {
+                    overflow-y: hidden;
+                }
+            }
+
+            @media (min-width: 1200px) {
+                overflow-y: visible;
+            }
+        }
+
+        .site-title {
+            visibility: hidden;
+
+            @media (min-width: 1200px) {
+                visibility: visible;
+                padding-top: 2rem;
+                text-align: center;
+            }
+        }
+
+        :global(.hamburger) {
+
+            @media (min-width: 1200px) {
+                position: relative;
+            }
+
+            @media (max-width: 1200px) {
+                & ~ .content-wrapper aside {
+                    display: none;
+                }
+
+                &[open] ~ .content-wrapper aside {
+                    display: block;
+                    position: fixed;
+                    left: 0;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    padding: 2rem;
+                    padding-top: 5rem;
+                    
+                    @media (prefers-color-scheme: light) {
+                        background-color: rgb(var(--gray-light));
+                    }
+                    @media (prefers-color-scheme: dark) {
+                        background-color: rgb(var(--gray-dark));
+                    }
+
+                    & .aside-wrapper {
+                        width: 50%;
+                        margin: 0 auto;
+                    }
+
+                    & :global(section) {
+                        margin-top: 2rem;
+                    }  
+                }
+            }
+        }
+
         .content-wrapper {
-            width: 95%;
-            margin: 0 auto;
-            justify-content: space-between;
-        }
-
-        main {
-            width: 64%;
-            max-width: 1024px;
-            flex-shrink: 0;
-            flex-grow: 0.7;
-        }
-
-        aside {
             display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            justify-content: flex-start;
-            align-items: center;
-            margin: 0;
-            padding: 3rem 1.5rem;
-            flex-shrink: 0;
-            flex-grow: 0.3;
+            gap: 5px;
+            width: 100%;
+            text-align: left;
 
+            @media (min-width: 1200px) {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            & main {
+                display: inline-block;
+                width: 100%;
+                max-width: 768px;
+                margin: 0 auto;
+                padding: 0;
+
+                @media (min-width: 768px) {
+                    width: 768px;
+                }
+
+                @media (min-width: 1200px) {
+                    max-width: 1024px;
+                    flex-shrink: 0;
+                    flex-grow: 0.7;
+                }
+            }
+
+            @media (min-width: 1200px) {
+                & aside {
+                    display: inline-block;
+                    position: relative;
+                    padding: 0 1.5rem 3rem 1.5rem;
+
+                    & .aside-wrapper {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2rem;
+                        justify-content: flex-start;
+                        align-items: center;
+                        flex-shrink: 0;
+                        flex-grow: 0.3;
+                    }
+                }
+            }
         }
+
+        
     }
-
-    
-
-    
 </style>

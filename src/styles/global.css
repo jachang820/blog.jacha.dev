@@ -54,12 +54,8 @@
 		}
 
 		@media (prefers-color-scheme: dark) {
-			background-color: rgb(var(--gray-dark));
+			background: linear-gradient( rgb(34 41 57),rgb(46, 49, 59)) no-repeat;
 			color: whitesmoke;
-		}
-
-		.content-wrapper {
-			display: block;
 		}
 	}
 
@@ -129,18 +125,6 @@
 		height: auto;
 		border-radius: 8px;
 	}
-	code {
-		padding: 2px 5px;
-		background-color: rgb(var(--gray-light));
-		border-radius: 2px;
-	}
-	pre {
-		padding: 1.5em;
-		border-radius: 8px;
-	}
-	pre > code {
-		all: unset;
-	}
 	blockquote {
 		@media (prefers-color-scheme: light) {
 			border-left: 4px solid var(--blog-accent-light);
@@ -159,9 +143,6 @@
 	@media (max-width: 720px) {
 		body {
 			font-size: 18px;
-		}
-		main {
-			padding: 1em;
 		}
 	}
 

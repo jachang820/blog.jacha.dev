@@ -1,0 +1,53 @@
+---
+import BlogName from './BlogName.astro';
+---
+
+<nav>
+	<div class="nav-wrapper">
+		<BlogName />
+    </div>
+</nav>
+<style>
+	@layer layout {
+		nav {
+            display: block;
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+			margin: 0;
+			padding: 0 1em;
+            z-index: 100;
+
+			@media (prefers-color-scheme: light) {
+				background: white;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				background: rgb(72, 82, 102);
+			}
+			
+			box-shadow: 0 2px 8px rgba(var(--black), 5%);
+
+            @media (min-width: 1200px) {
+                display: none;
+		    }
+		}
+		h2 {
+			margin: 0;
+			font-size: 1em;
+		}
+
+		h2 a,
+		h2 a.active {
+			text-decoration: none;
+		}
+		.nav-wrapper {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+            margin-bottom: -1.2rem;
+        }
+		
+	}
+</style>
