@@ -39,17 +39,20 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
             page.data.map((post) => (
                 <li>
                     <a href={`/blog/${slugifyPost(post)}/`}>
-                        <h4 class="title">{post.data.title}</h4>
-                        <p class="date">
-                            | <FormattedDate date={post.data.pubDate} />
+                        <h4 class="title">
+                            {post.data.title} 
+                            <span class="date">| <FormattedDate date={post.data.pubDate} /></span>
                             {
                                 post.data.updatedDate && (
-                                    <>
+                                    <span class="date">
                                        [ Updated: <FormattedDate date={post.data.updatedDate} /> ]
-                                    </>
+                                    </span>
                                 )
                             }
-                        </p>
+                        </h4>
+                        
+                            
+                        
                     </a>
                     <p class="description">
                         { post.data.description }
@@ -94,10 +97,10 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
 
     @layer layout {
         section {
-            margin: 0 1rem;
+            margin: 0;
 
             @media (min-width: 1200px) {
-                margin: 0 1rem 0 3rem;
+                margin: 0 1rem;
             }
 
             & h1 {
@@ -109,14 +112,21 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
                 flex-wrap: wrap;
                 gap: 1rem;
                 list-style-type: none;
-                margin: 0 1rem;
-                padding: 0;
+                margin: 0;
+                padding: 0.5rem;
 
                 & li {
-                    width: calc(100% - 1rem);
+                    width: 100%;
                     padding: 1rem;
-                    border-radius: 1rem;
+                    border-radius: 0.25rem;
                     border: 1px solid rgb(168, 155, 180);
+
+                    @media (prefers-color-scheme: light) {
+                        background-color: #e7ebee;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                        background-color: #343e4b;
+                    }
 
                     & * {
                         text-decoration: none;
@@ -134,19 +144,24 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
                         }
                     }
 
+                    & span {
+                        display: inline;
+                    }
+
                     & .title {
-                        display: inline-block;
                         margin: 0;
                         line-height: 1;
                     }
                     & .date {
+                        font-size: 1.4rem;
+                        font-weight: normal;
+                        vertical-align: middle;
                         margin: 0;
                         color: rgb(var(--gray));
                     }
 
-                    & .description {
-                        margin-top: 0.25rem;
-                        margin-bottom: 1rem;
+                    & p.description {
+                        margin: 0.25rem 0.5rem;
 
                         @media (prefers-color-scheme: light) {
                             color: #333;

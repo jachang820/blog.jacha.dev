@@ -65,7 +65,7 @@ const { title, description } = Astro.props;
         body {
             overflow-x: hidden;
 
-            @media (max-width: 1200px) {
+            @media (max-width: 1199px) {
                 &:has(.hamburger[open]) {
                     overflow-y: hidden;
                 }
@@ -92,7 +92,7 @@ const { title, description } = Astro.props;
                 position: relative;
             }
 
-            @media (max-width: 1200px) {
+            @media (max-width: 1199px) {
                 & ~ .content-wrapper aside, & ~ .search-wrapper {
                     display: none;
                 }
@@ -127,7 +127,7 @@ const { title, description } = Astro.props;
                         position: relative;
                         width: 100%;
                         padding-top: 4rem;
-                        height: calc(100vh - 10rem);
+                        height: calc(100vh - 4rem);
                         overflow-y: auto;
                     }
 
@@ -145,13 +145,16 @@ const { title, description } = Astro.props;
 
         .content-wrapper {
             display: flex;
-            gap: 5px;
             width: 100%;
             text-align: left;
 
             @media (min-width: 1200px) {
                 width: 100%;
-                justify-content: space-between;
+                box-sizing: border-box;
+                gap: 5%;
+                padding-left: 4rem;
+                padding-right: 4rem;
+                justify-content: center;
             }
 
             & main {
@@ -159,16 +162,20 @@ const { title, description } = Astro.props;
                 width: 100%;
                 max-width: 768px;
                 margin: 0 auto;
-                padding: 0;
+                padding-left: 3rem;
+                padding-right: 3rem;
+                padding-bottom: 8rem;
 
                 @media (min-width: 768px) {
-                    width: 768px;
+                    width: 680px;
                 }
 
                 @media (min-width: 1200px) {
-                    max-width: 1024px;
-                    flex-shrink: 0;
-                    flex-grow: 0.6;
+                    padding-left: 0;
+                    padding-right: 0;
+                    max-width: 900px;
+                    flex: 2 0 680px;
+                    margin: 0;
                 }
             }
 
@@ -176,26 +183,30 @@ const { title, description } = Astro.props;
                 & aside {
                     display: inline-block;
                     position: relative;
-                    padding: 0 5rem 3rem 1.5rem;
-                    flex-shrink: 0;
-                    flex-grow: 0.4;
+                    padding-bottom: 8rem;
+                    max-width: 400px;
+                    flex: 3 0 328px;
 
-                    & .aside-wrapper {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 2rem;
-                        justify-content: flex-start;
-                        align-items: center;
+                    & .aside-scroll-wrapper {
+                        height: auto;
 
-                        & .search-wrapper {
-                            width: 100%;
-                            max-width: 28vw;
-                            padding: 0;
-                            margin-top: 2rem;
+                        & .aside-wrapper {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 2rem;
+                            justify-content: flex-start;
+                            align-items: center;
 
-                            & :global(#search) {
+                            & .search-wrapper {
+                                width: 100%;
                                 max-width: 28vw;
-                                margin: 0;
+                                padding: 0;
+                                margin-top: 2rem;
+
+                                & :global(#search) {
+                                    max-width: 28vw;
+                                    margin: 0;
+                                }
                             }
                         }
                     }

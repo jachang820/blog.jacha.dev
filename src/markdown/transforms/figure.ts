@@ -29,11 +29,6 @@ const transform = (): ShikiTransformer => {
             // Parse text data for title and captions
             const title = parseTransformMeta(titleMeta);
 
-            // Check if data exists
-            if (!title) {
-                return node;
-            }
-
             // Get existing code
             const pre = node.children[0] as Element;
             const lang = pre.properties['dataLanguage'] as string;
@@ -77,36 +72,42 @@ const transform = (): ShikiTransformer => {
                 children: []
             };
 
+            const figCaption: Element = {
+                type: 'element',
+                tagName: 'figcaption',
+                properties: {
+                    'style': figcaptionStyles,
+                    'data-code-caption': '',
+                    'data-language': lang
+                },
+                children: []
+            };
+
+            const figTitle: Element = {
+                type: 'element',
+                tagName: 'span',
+                properties: {
+                    'data-code-title': '',
+                    'style': pre.properties['style']
+                },
+                children: [{ type: 'text', value: title }]
+            };
+
+            const figLanguage: Element = {
+                type: 'element',
+                tagName: 'span',
+                properties: {
+                    'data-code-title-language': ''
+                },
+                children: [{ type: 'text', value: lang }]
+            };
+
             if (title) {
-                figure.children.push({
-                    type: 'element',
-                    tagName: 'figcaption',
-                    properties: {
-                        'style': figcaptionStyles,
-                        'data-code-caption': '',
-                        'data-language': lang
-                    },
-                    children: [
-                        {
-                            type: 'element',
-                            tagName: 'span',
-                            properties: {
-                                'data-code-title': '',
-                                'style': pre.properties['style']
-                            },
-                            children: [{ type: 'text', value: title }]
-                        }, 
-                        {
-                            type: 'element',
-                            tagName: 'span',
-                            properties: {
-                                'data-code-title-language': ''
-                            },
-                            children: [{ type: 'text', value: lang }]
-                        }
-                    ]
-                });
+                figCaption.children.push(figTitle);
             }
+            figCaption.children.push(figLanguage);
+
+            figure.children.push(figCaption);
 
             figure.children.push(pre);
             

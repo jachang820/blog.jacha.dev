@@ -35,13 +35,11 @@ const { title, tags, pubDate, updatedDate } = Astro.props;
 <style>
     @layer layout {
         article {
-            max-width: calc(100% - 2em);
-            margin: auto;
-            padding: 0 2em;
+            margin: 0;
+            padding: 0;
 
             @media (min-width: 1200px) {
                 max-width: 900px;
-                padding-left: 5rem;
             }
         }
         .title {

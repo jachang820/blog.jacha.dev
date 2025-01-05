@@ -37,14 +37,14 @@
 	body {
 		display: flex;
 		flex-direction: column;
-		height: 100vh;
+		height: 100%;
 		font-family: 'Atkinson', sans-serif;
 		margin: 0;
 		padding: 0;
 		text-align: left;
 		background-size: 100% 600px;
-		word-wrap: break-word;
 		overflow-wrap: break-word;
+		word-break: break-word;
 		font-size: 20px;
 		line-height: 1.7;
 
@@ -103,9 +103,6 @@
 		@media (prefers-color-scheme: dark) {
 			color: var(--blog-accent-dark);
 		}
-	}
-	p {
-		margin-bottom: 1em;
 	}
 	.prose p {
 		margin-bottom: 2em;

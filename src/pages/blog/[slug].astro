@@ -8,7 +8,7 @@ import { slugifyPost } from '../../helpers';
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
 	return posts.map((post) => ({
-		params: { id: slugifyPost(post) },
+		params: { slug: slugifyPost(post) },
 		props: post,
 	}));
 }
@@ -138,6 +138,13 @@ const { Content } = await render(post);
 			}
 		}
 
+		p > code {
+			font-size: 0.9em;
+			border-radius: 5px;
+			border: solid rgba(115 138 148 / 50%) 1px;
+			padding: 2px;
+		}
+
 		.astro-code {
 			padding-top: 0.25rem;
 			margin: 0;
@@ -147,6 +154,7 @@ const { Content } = await render(post);
 				font-size: 0.9em;
 				border-radius: 5px;
 				border: solid rgba(115 138 148 / 50%) 1px;
+				padding: 2px;
 			}
 
 			&[data-block-code] {
