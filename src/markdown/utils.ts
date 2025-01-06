@@ -42,7 +42,7 @@ export const alterRGB = (rgb: string, func: (decimal: number) => number) => {
 export const isLine = (line: ElementContent): boolean => {
     if (line.type === 'element' &&
         line.tagName === 'span' &&
-        !!line.properties['class']) {
+        'class' in line.properties) {
             let classes = line.properties['class'];
             if (typeof classes === 'string') {
                 classes = classes.split(' ');
@@ -50,4 +50,20 @@ export const isLine = (line: ElementContent): boolean => {
             return (classes as string[]).includes('line');
     } 
     return false;
+};
+
+export const isLineMessage = (line: ElementContent): boolean => {
+    if (line.type !== 'element' || line.tagName !== 'span') {
+        return false;
+    }
+    return 'data-line-message' in line.properties;
+};
+
+export const isNonCodeSpan = (node: ElementContent): boolean => {
+    if (node.type !== 'element' || node.tagName !== 'span') {
+        return false;
+    }
+    return ('data-line-number' in node.properties ||
+            'data-line-code-pre-ws' in node.properties ||
+            'data-line-message' in node.properties);
 };

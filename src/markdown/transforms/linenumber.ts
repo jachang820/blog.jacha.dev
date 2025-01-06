@@ -1,9 +1,9 @@
 import type { ShikiTransformer } from 'shiki';
 import type { Element, Text } from 'hast';
 
-import { parseMeta, alterRGB, isLine } from './utils';
+import { parseMeta, alterRGB, isLine, isLineMessage } from '../utils';
 
-const startLineCommand = 'startLine';
+const startLineCommand = 'start-line';
 
 const parseTransformMeta = (meta: string | null): number | null => {
     if (!meta || !meta.trim()) {
@@ -13,31 +13,43 @@ const parseTransformMeta = (meta: string | null): number | null => {
     return !Number.isNaN(value) ? value : null;
 };
 
+const isDiffRemove = (line: Element): boolean => {
+    const classes = line.properties['class'];
+    if (classes instanceof Array || typeof classes === 'string') {
+        return classes.includes('diff') && classes.includes('remove');
+    }
+    else {
+        return false;
+    }
+};
+
 const transform = (): ShikiTransformer => {
 
     return {
         name: 'devblog-transformers:meta-line-numbers',
-        code(node) {
+        pre(node) {
             // Find relevant data from options meta
             const startLineMeta = parseMeta(this.options, startLineCommand);
 
             // Parse text data for starting line number
             const startLine = parseTransformMeta(startLineMeta) ?? 1;
 
+            const code = node.children[0] as Element;
+
             // Add line numbers to each line
             let lineNumber = startLine - 1;
-            for (let i = 0; i < node.children.length; i++) {
-                if (!isLine(node.children[i])) {
-                    continue;
+            for (let i = 0; i < code.children.length; i++) {
+                if (!isLine(code.children[i]) || 
+                    isLineMessage(code.children[i])) {
+                        continue;
                 }
 
-                lineNumber++;
-                const line = node.children[i] as Element;
+                const line = code.children[i] as Element;
 
                 // Create spans to hold line number and wrap code
                 const lineNumberText: Text = {
                     type: 'text',
-                    value: lineNumber.toString()
+                    value: isDiffRemove(line) ? ' ' : (++lineNumber).toString()
                 };
 
                 const lineNumberSpan: Element = {
@@ -49,26 +61,23 @@ const transform = (): ShikiTransformer => {
                     children: [lineNumberText]
                 };
 
-                const code: Element = {
+                const lineCodeSpan: Element = {
                     type: 'element',
                     tagName: 'span',
                     properties: {
-                        'data-line-code-wrapper': ''
+                        'data-line-code': ''
                     },
                     children: line.children
                 };
 
-                line.children = [lineNumberSpan, code];
+                line.children = [lineNumberSpan, lineCodeSpan];
                 line.properties['data-line'] = '';
             }
 
             // Adjust width according to max line number digits
             const maxLineDigits = lineNumber.toString().length;
-            node.properties['data-line-number-max-digits'] = maxLineDigits.toString();
+            code.properties['data-line-number-max-digits'] = maxLineDigits.toString();
 
-            return node;
-        },
-        pre(node) {
             // Get text color style
             const lineNumberStylesArray: string[] = [];
             const stylesString = node.properties['style'] as string;
@@ -85,13 +94,9 @@ const transform = (): ShikiTransformer => {
                 }
             });
 
-            const lineNumberStyles = lineNumberStylesArray.join(' ');
-            for (const child of node.children) {
-                if (child.type === 'element' && child.tagName === 'code') {
-                    child.properties['style'] = child.properties['style'] + lineNumberStyles;
-                    break;
-                }
-            }
+            const lineNumberStyles = lineNumberStylesArray.join('');
+            code.properties['style'] = code.properties['style'] || '';
+            code.properties['style'] += lineNumberStyles;
 
             return node;
         }

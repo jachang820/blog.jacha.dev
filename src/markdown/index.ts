@@ -10,6 +10,7 @@ import metaHighlightTransform from './transforms/highlight';
 import metaLineNumberTransform from './transforms/linenumber';
 import metaFigureTransform from './transforms/figure';
 import renderWhitespaceTransform from './transforms/whitespace';
+import errorMessagesTransform from './transforms/errormessages';
 
 import highlightInlineCode from './inline-code';
 
@@ -22,13 +23,14 @@ const shikiConfig: Partial<ShikiConfig> = {
     },
     defaultColor: false,
     transformers: [
-        transformerNotationDiff(),
-        transformerNotationErrorLevel(),
-        renderWhitespaceTransform(),
-        metaExpandedMetaTransform(),
-        metaHighlightTransform(),
-        metaLineNumberTransform(),
-        metaFigureTransform()
+        metaExpandedMetaTransform(), // preprocess, pre (clean-up)
+        errorMessagesTransform(), // line
+        transformerNotationDiff(), // code
+        transformerNotationErrorLevel(), // code
+        metaLineNumberTransform(), // pre
+        metaHighlightTransform(), // pre (must be after line number)
+        renderWhitespaceTransform(), // root
+        metaFigureTransform(), // root (must be last)
     ]
 };
 

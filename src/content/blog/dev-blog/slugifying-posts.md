@@ -30,7 +30,11 @@ export const slugifyPost = (post: BlogPost): string => {
 
 To generate dynamic routes in Astro, we need to use `GetStaticPaths` to map out all the routes according to a pattern. In this case, since we want the route to end in a slug, we first create the page `/pages/blog/[slug].astro`. The word in between the square brackets can be used as a parameter name.
 
-```typescript title="/src/pages/blog/[slug].astro"
+```typescript meta="---"
+---
+title="/src/pages/blog/[slug].astro"
+directory-level-fade=2
+---
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
@@ -59,7 +63,11 @@ const { ...post } = Astro.props;
 
 And then in the layout, we just use what we need. 
 
-```astro title="/src/layouts/BlogPost.astro"
+```astro meta="---"
+---
+title="/src/layouts/BlogPost.astro"
+directory-level-fade=2
+---
 ---
 import type { CollectionEntry } from 'astro:content';
 
@@ -75,7 +83,11 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
 
 Now this...
 
-```markdown title="/src/content/blog/some-file-name.md"
+```markdown meta="---"
+---
+title="/src/content/blog/some-file-name.md"
+directory-level-fade=2
+---
 ---
 title: 'My first blog post'
 pubDate: 'Dec 28 2024'

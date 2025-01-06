@@ -1,11 +1,12 @@
 import type { ShikiTransformer } from 'shiki';
 import type { Element } from 'hast';
 
-import { parseMeta, alterRGB } from './utils';
+import { parseMeta, alterRGB } from '../utils';
 
 const titleCommand = 'title';
+const fadeCommand = 'directory-level-fade';
 
-const parseTransformMeta = (meta: string | null): string | null => {
+const parseTransformTitle = (meta: string | null): string | null => {
     if (!meta || !meta.trim()) {
         return null;
     }
@@ -16,7 +17,14 @@ const parseTransformMeta = (meta: string | null): string | null => {
     return meta;
 };
 
-
+const parseTransformLevel = (meta: string | null): number | null => {
+    if (!meta || !meta.trim()) {
+        return null;
+    }
+    meta = meta.trim();
+    const level = parseInt(meta);
+    return !isNaN(level) ? level : null;
+}
 
 const transform = (): ShikiTransformer => {
     
@@ -25,9 +33,26 @@ const transform = (): ShikiTransformer => {
         root(node) {
             // Find relevant data from options meta
             const titleMeta = parseMeta(this.options, titleCommand);
+            const dirLevelFadeMeta = parseMeta(this.options, fadeCommand);
 
-            // Parse text data for title and captions
-            const title = parseTransformMeta(titleMeta);
+            // Parse text data for title
+            const title = parseTransformTitle(titleMeta);
+
+            // Parse text data for directory
+            let level = parseTransformLevel(dirLevelFadeMeta);
+
+            // Split title by directory
+            const titleLevels = title?.split('/');
+
+            if (title && level) {
+                if (level < 0 || level >= titleLevels!.length) {
+                    console.error("Directory level out of range. Fade will not be in effect");
+                    level = null;
+                }
+            }
+            else if (!title) {
+                level = null;
+            }
 
             // Get existing code
             const pre = node.children[0] as Element;
@@ -40,7 +65,7 @@ const transform = (): ShikiTransformer => {
             const figcaptionStylesArray: string[] = [];
             pre.properties['style'].split(';').forEach((style) => {
                 const [key, value] = style.trim().split(':');
-                if (key.startsWith('--')) {
+                if (key.startsWith('--shiki')) {
                     const figcaptionKey = key.replace('shiki', 'shiki-caption');
                     let newValue;
                     if (key === '--shiki-light') {
@@ -90,7 +115,7 @@ const transform = (): ShikiTransformer => {
                     'data-code-title': '',
                     'style': pre.properties['style']
                 },
-                children: [{ type: 'text', value: title }]
+                children: []
             };
 
             const figLanguage: Element = {
@@ -102,6 +127,38 @@ const transform = (): ShikiTransformer => {
                 children: [{ type: 'text', value: lang }]
             };
 
+            if (level) {
+                const fadeText = titleLevels!.slice(0, level + 1).join('/');
+                const fadeTextSpan: Element = {
+                    type: 'element',
+                    tagName: 'span',
+                    properties: {
+                        'data-code-title-fade': ''
+                    },
+                    children: [{ type: 'text', value: fadeText }]
+                };
+                figTitle.children.push(fadeTextSpan);
+
+                if (level < titleLevels!.length - 1) {
+                    const mainText = '/' + titleLevels!.slice(level + 1).join('/');
+                    const mainTextSpan: Element = {
+                        type: 'element',
+                        tagName: 'span',
+                        properties: {
+                            'data-code-title-main': ''
+                        },
+                        children: [{ type: 'text', value: mainText }]
+                    };
+                    figTitle.children.push(mainTextSpan);
+                }
+            }
+            else {
+                figTitle.children.push({
+                    type: 'text',
+                    value: title!
+                });
+            }
+
             if (title) {
                 figCaption.children.push(figTitle);
             }
@@ -112,6 +169,15 @@ const transform = (): ShikiTransformer => {
             figure.children.push(pre);
             
             node.children.splice(0, 1, figure);
+
+            // Remove unnecessary properties from pre tag
+            if (this.options.meta) {
+                const meta = Object(this.options.meta)
+                const keys = Object.keys(meta);
+                for (const key of keys) {
+                    delete pre.properties[key];
+                }
+            }
 
             return node;
         }

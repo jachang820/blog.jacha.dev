@@ -8,7 +8,11 @@ tags: ['Astro', 'typescript']
 The internet is replete with examples of creating dynamic routes using Astro. Look for paginated routes with parameters and Typescript, however, and the results all seem a little incomplete. For a beginner like I am, it wasn't entirely clear how the different examples in the documentation work together. So let's walk through this.
 
 I think the first thing that was slightly confusing for me was that non-paginated routes look like this for example:
-```astro title="/src/pages/blog/tag/[tag].astro"
+```astro meta="---" 
+---
+title="/src/pages/blog/tag/[tag].astro"
+directory-level-fade=2
+---
 ---
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
@@ -28,7 +32,12 @@ export const getStaticPaths = (async () => {
 ```
 
 However, according to Astro's Routing Reference, this is what paginated routes look like:
-```astro title="/src/pages/blog/tag/[tag]/[page].astro"
+```astro meta="---" 
+---
+title="/src/pages/blog/tag/[tag]/[page].astro"
+directory-level-fade=2
+highlight=[7:16-23]
+---
 ---
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';

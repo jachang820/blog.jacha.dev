@@ -1,9 +1,9 @@
-import { type ShikiTransformer } from 'shiki';
+import type { ShikiTransformer } from 'shiki';
 import type { Element, ElementContent } from 'hast';
 
-import { parseMeta, isLine } from './utils';
+import { parseMeta, isLine, isLineMessage } from '../utils';
 
-const tabSizeCommand = 'tabSize';
+const tabSizeCommand = 'tab-size';
 
 const parseTransformMeta = (meta: string | null): number | null => {
     if (!meta || !meta.trim()) {
@@ -35,7 +35,7 @@ const transform = (): ShikiTransformer => {
             const code = pre.children[0] as Element;
 
             code.children.forEach((line) => {
-                if (isLine(line)) {
+                if (isLine(line) && !isLineMessage(line)) {
                     const nodesToVisit: ElementContent[] = [line];
 
                     // Extract whitespace from text
@@ -83,12 +83,10 @@ const transform = (): ShikiTransformer => {
 
             // Split spaces before text into their own element
             code.children.forEach((line) => {
-                if (isLine(line)) {
+                if (isLine(line) && !isLineMessage(line)) {
                     line = line as Element;
                     if (line.children && 
-                        line.children.length === 2 &&
-                        line.children[1].type === 'element' &&
-                        'data-line-code-wrapper' in Object(line.children[1].properties)
+                        line.children[1].type === 'element' 
                     ) {
                         const lineCode = line.children[1] as Element;
                         let count = 0;

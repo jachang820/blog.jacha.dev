@@ -1,7 +1,7 @@
 import type { ShikiTransformer } from 'shiki';
 import type { Element, Text, ElementContent, Properties } from 'hast';
 
-import { parseMeta, alterRGB, isLine } from './utils';
+import { parseMeta, alterRGB, isLine, isNonCodeSpan } from '../utils';
 
 export type HighlightedSegment = {
     startLine: number,
@@ -17,7 +17,7 @@ enum KeepSide {
 }
 
 const transformCommand = 'highlight';
-const startLineCommand = 'startLine';
+const startLineCommand = 'start-line';
 
 const regexp = /(([\d]+)(?:-([\d]+))?(?::([\d]+)(?:-([\d]+))?)?(?:#([A-Za-z]+))?),?/g;
 
@@ -74,12 +74,18 @@ const getTextLength = (node: ElementContent): number => {
     }
 
     // Element
+    if (isNonCodeSpan(node)) {
+        return 0;
+    }
+
     const nodesToVisit = [...node.children];
     while (nodesToVisit.length > 0) {
         const child = nodesToVisit.pop();
         if (child) {
             if (child.type === 'element') {
-                nodesToVisit.push(...child.children);
+                if (!isNonCodeSpan(child)) {
+                    nodesToVisit.push(...child.children);
+                }
             }
             else {
                 length += child.value.length;
@@ -219,11 +225,23 @@ const markTokens = (
     line.children.splice(startTokenIndex, deleteCount, mark);
 };
 
+const isNumberedLine = (line: Element): boolean => {
+    for (let i = 0; i < line.children.length; i++) {
+        const child = line.children[i];
+        if (child.type === 'element' &&
+            'data-line-number' in child.properties &&
+            child.children[0].type === 'text') {
+                return !isNaN(parseInt(child.children[0].value));
+        }
+    }
+    return false;
+}
+
 const transform = (): ShikiTransformer => {
 
     return {
         name: 'devblog-transformers:meta-highlight',
-        code(node) {
+        pre(node) {
             // Find relevant data from options meta
             const highlightMeta = parseMeta(this.options, transformCommand);
             const startLineMeta = parseMeta(this.options, startLineCommand);
@@ -246,26 +264,29 @@ const transform = (): ShikiTransformer => {
             if (segments === null || node.type !== 'element') {
                 return node;
             }
+
+            const code = node.children[0] as Element;
             
             // Organize segments by lines
             const lines = getSegmentByLines(segments);
 
             // Find last possible line
             let maxLineNumber = startLine - 1;
-            for (const line of node.children) {
-                if (isLine(line)) {
+            for (const line of code.children) {
+                if (isLine(line) && isNumberedLine(line as Element)) {
                     maxLineNumber++;
                 }
             }
             
             let lineCount = startLine;
-            for (let j = 0; j < node.children.length; j++) {
+            for (let j = 0; j < code.children.length; j++) {
                 // Skip nodes that are not lines of code
-                if (!isLine(node.children[j])) {
+                if (!isLine(code.children[j]) ||
+                    !isNumberedLine(code.children[j] as Element)) {
                     continue;
                 }
 
-                const line = node.children[j] as Element;
+                const line = code.children[j] as Element;
                 const lineNumber = lineCount++;
 
                 // Current line has no highlights
@@ -276,11 +297,10 @@ const transform = (): ShikiTransformer => {
                 const lineSegments = lines.get(lineNumber);
 
                 for (const segment of lineSegments!) {
-                    
                     // Invalid segment
                     if ((segment.endLine && segment.endLine < segment.startLine)
                         || (segment.endChar && segment.endChar < segment.startChar)) {
-                            console.error(`Highlight start must be before end.`, segment);
+                            console.error("Highlight start must be before end.", segment);
                             continue;
                         }
                     else if (segment.startLine > maxLineNumber) {
@@ -289,7 +309,7 @@ const transform = (): ShikiTransformer => {
                     }
 
                     // Highlight entire line
-                    if (!segment.startChar) {
+                    if (segment.startChar !== 0 && !segment.startChar) {
                         line.properties = line.properties || {};
                         line.properties['data-highlighted-line'] = '';
                         if (segment.dataId) {
@@ -301,9 +321,10 @@ const transform = (): ShikiTransformer => {
                         let startIndex = segment.startChar;
                         let endIndex = segment.endChar;
 
-                        const overallTextLength = getTextLength(node);
+                        const overallTextLength = getTextLength(line);
                         if (startIndex >= overallTextLength) {
-                            console.error(`Start character index (${startIndex}) out of range.`);
+                            console.error(`Start character index (${startIndex}) ` +
+                                        `out of range (${overallTextLength}).`);
                             continue;
                         }
 
@@ -312,6 +333,13 @@ const transform = (): ShikiTransformer => {
                         let i = 0;
                         while (i < line.children.length && endMark === null) {
                             const child = line.children[i] as Element;
+
+                            // Skip line number and indents
+                            if (isNonCodeSpan(child)) {
+                                i++;
+                                continue;
+                            }
+
                             const textLength = getTextLength(child);
                             
                             if (startMark === null) {
@@ -357,10 +385,7 @@ const transform = (): ShikiTransformer => {
                     }
                 }
             }
-            
-            return node;
-        },
-        pre(node) {
+
             // Get text color style
             const lineNumberStylesArray: string[] = [];
             const stylesString = node.properties['style'] as string;
@@ -377,13 +402,9 @@ const transform = (): ShikiTransformer => {
                 }
             });
 
-            const lineNumberStyles = lineNumberStylesArray.join(' ');
-            for (const child of node.children) {
-                if (child.type === 'element' && child.tagName === 'code') {
-                    child.properties['style'] = child.properties['style'] + lineNumberStyles;
-                    break;
-                }
-            }
+            const lineNumberStyles = lineNumberStylesArray.join('');
+            code.properties['style'] = code.properties['style'] || '';
+            code.properties['style'] += lineNumberStyles;
 
             return node;
         }

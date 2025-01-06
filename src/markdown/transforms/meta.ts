@@ -1,6 +1,6 @@
 import type { ShikiTransformer } from 'shiki';
 
-import { parseMeta } from './utils';
+import { parseMeta } from '../utils';
 
 const metaCommand = 'meta';
 
@@ -60,16 +60,6 @@ const transform = (): ShikiTransformer => {
             }
 
             return code;
-        },
-        pre(node) {
-            // Remove unnecessary properties from pre tag
-            if (this.options.meta) {
-                const meta = Object(this.options.meta)
-                const keys = Object.keys(meta);
-                for (const key of keys) {
-                    delete node.properties[key];
-                }
-            }
         }
     };
 };
