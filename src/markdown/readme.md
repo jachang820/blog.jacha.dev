@@ -31,9 +31,10 @@ highlight=[1-3,4]
 
 Line numbers are automatic. `start-line` specifies the line number to show for the first line of code. Every line thereafter is incremented.
 
-### highlight: `\[...startLine[-endLine[:startIndex[-endIndex[#id]]]]]\]`
+### highlight: 
+`\[...startLine[-endLine[:startIndex[-endIndex[#id]]]]]\]`
 
-Both line and range highlighting are allowed. Word matching should be simple to implement at a future time. For now, a single line or a range of lines could be specified, and for either a range of indices could be specified. If only one index is specified, then the rest of the line is highlighted from that character. An HTML attribute `data-highlighted-chars-id` could also be specified for custom styling. For example,
+Both line and range highlighting are allowed. Ranges can be matched within a line by start and end index, strings, and regular expressions. The number of matches in a line can be specfied. If only one index is specified, then the rest of the line is highlighted from that character. An HTML attribute `data-highlighted-chars-id` could also be specified for custom styling. For example,
 
 Second line highlighted:
 ````markdown
@@ -51,7 +52,7 @@ console.log(message); // line highlighted
 ```
 ````
 
-`message` in the second line highlighted:
+"message" in the second line highlighted:
 ````markdown
 ```javascript highlight=[2:12-19]
 const message = "Hello world!";
@@ -59,13 +60,30 @@ console.log(**message**); // "message" highlighted
 ```
 ````
 
-`message` in both lines highlighted and assigned attribute `data-highlighted-chars-id="message"`:
+"message" in both lines highlighted and assigned the attribute `data-highlighted-chars-id="message"`:
 ````markdown
 ```javascript highlight=[1:6-13#message,2:12-19#message]
 const **message** = "Hello world!";
 console.log(**message**);
 ```
 ````
+
+We could also select the range with a string to match:
+````markdown
+```javascript highlight=[2:"message"]
+const message = "Hello world!";
+console.log(**message**); // "message" highlighted
+```
+````
+
+Finally, we match both "message" and "world" in the first line using a regular expression:
+````markdown
+```javascript highlight=[2:/message|world/]
+const **message** = "Hello **world**!"; // "message" and "world" highlighted
+console.log(message); 
+```
+````
+
 
 ### title: string
 
@@ -135,7 +153,7 @@ Diff transformers are imported from [Shiki transformers](https://github.com/shik
 
 ### Annotation / Log / Warning / Error Line Messages
 
-Lines beginning with a comment and `[!code (level)]`, then a message, where `(level)` is either `annotation | log | warning | error`, are highlighted with an appropriate icon on the left. This is inspired from (TwoSlash)[https://shiki.style/packages/twoslash]. To be clear,
+Lines beginning with a comment and `[!code (level)]`, then a message, where `(level)` is either `annotation | log | warning | error`, are highlighted with an appropriate icon on the left. This is inspired from [TwoSlash](https://shiki.style/packages/twoslash). To be clear,
 
 ````markdown
 ```css

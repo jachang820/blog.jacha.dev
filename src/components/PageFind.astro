@@ -15,3 +15,32 @@ import '@pagefind/default-ui/css/ui.css';
         });
     });
 </script>
+
+<style is:global>
+
+    .pagefind-ui__result {
+        @media (prefers-color-scheme: light) {
+            --pagefind-ui-border: #9fadb3aa;
+        }
+    }
+    .pagefind-ui__message,
+    .pagefind-ui__result-title, 
+    .pagefind-ui__result-excerpt {
+        @media (prefers-color-scheme: dark) {
+            color: #eee;
+        }
+    }
+    .pagefind-ui__drawer {
+        @media (prefers-color-scheme: light) {
+            background-color: #e0e3eb;
+        }
+        @media (prefers-color-scheme: dark) {
+            background-color: #2e374b;
+        }
+
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+        padding: 0.5rem;
+    }
+    
+</style>

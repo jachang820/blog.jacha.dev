@@ -33,6 +33,8 @@ const { title, tags, pubDate, updatedDate } = Astro.props;
 </article>
 
 <style>
+    @layer default, layout, specifics, override;
+
     @layer layout {
         article {
             margin: 0;

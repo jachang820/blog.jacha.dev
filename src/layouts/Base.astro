@@ -53,6 +53,8 @@ const { title, description } = Astro.props;
 </html>
 
 <style>
+    @layer default, layout, specifics, override;
+
     @layer override {
         :global(.hamburger) {
             @media (min-width: 1200px) {
@@ -98,10 +100,6 @@ const { title, description } = Astro.props;
                 }
 
                 &[open] ~ .search-wrapper {
-                    /* display: block;
-                    position: relative;
-                    left: 25%;
-                    width: 50%; */
                     display: block;
                     width: 50%;
                     margin: -1.5rem auto 2rem auto;

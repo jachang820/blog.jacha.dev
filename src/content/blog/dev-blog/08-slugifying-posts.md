@@ -6,7 +6,7 @@ tags: ['Astro', 'typescript']
 ---
 Perhaps we want to organize our content file structure differently, or we don't want to have to keep track of how we name files, or we don't want to type a post title in two different ways. Each of these situations merit considering a post file naming scheme besides the Astro default.
 
-For example, suppose I have a blog post named "My First Blog Post". Using the blog starter template, I would create a `content/blog/my-first-blog-post.md`, and then enter the title in the frontmatter. The title would be used in the header of the post, but its route would be determined by the file name as stored in `post.data.id`. For my first several posts, I want to organize them in the file structure, maybe, in a subdirectory so that they're grouped by project, but I don't want this structure publicly exposed. So perhaps my file name is `content/blog/first-project/01.md`, but I still want the route to be `/blog/2024-28-12-my-first-blog-post/`.
+For example, suppose I have a blog post named "My First Blog Post". Using the blog starter template, I would create a `/src/content/blog/my-first-blog-post.md`, and then enter the title in the frontmatter. The title would be used in the header of the post, but its route would be determined by the file name as stored in `post.data.id{:ts}`. For my first several posts, I want to organize them in the file structure, maybe, in a subdirectory so that they're grouped by project, but I don't want this structure publicly exposed. So perhaps my file name is `/src/content/blog/first-project/01.md`, but I still want the route to be `/blog/2024-28-12-my-first-blog-post/`.
 
 To achieve this, we make use of a tool to convert the title into URL format: `npm install slugify{:shell}`. This should make it easier to write a helper function to convert post metadata to a slug.
 
@@ -28,12 +28,12 @@ export const slugifyPost = (post: BlogPost): string => {
 };
 ```
 
-To generate dynamic routes in Astro, we need to use `GetStaticPaths` to map out all the routes according to a pattern. In this case, since we want the route to end in a slug, we first create the page `/pages/blog/[slug].astro`. The word in between the square brackets can be used as a parameter name.
+To generate dynamic routes in Astro, we need to use `GetStaticPaths` to map out all the routes according to a pattern. In this case, since we want the route to end in a slug, we first create the page `/src/pages/blog/[slug].astro`. The word in between the square brackets can be used as a parameter name.
 
-```typescript meta="---"
+```typescript meta=---;
 ---
-title="/src/pages/blog/[slug].astro"
-directory-level-fade=2
+title=/src/pages/blog/[slug].astro
+dir-level-fade=2
 ---
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
@@ -63,10 +63,10 @@ const { ...post } = Astro.props;
 
 And then in the layout, we just use what we need. 
 
-```astro meta="---"
+```astro meta=---;
 ---
-title="/src/layouts/BlogPost.astro"
-directory-level-fade=2
+title=/src/layouts/BlogPost.astro
+dir-level-fade=2
 ---
 ---
 import type { CollectionEntry } from 'astro:content';
@@ -83,10 +83,10 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
 
 Now this...
 
-```markdown meta="---"
+```markdown meta=---;
 ---
-title="/src/content/blog/some-file-name.md"
-directory-level-fade=2
+title=/src/content/blog/some-file-name.md
+dir-level-fade=2
 ---
 ---
 title: 'My first blog post'

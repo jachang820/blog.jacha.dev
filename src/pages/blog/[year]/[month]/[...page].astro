@@ -40,10 +40,9 @@ type Params = { year: string, month: string };
 
 const { year, month } = Astro.params as Params;
 const { page } = Astro.props;
-const description = SITE_DESCRIPTION + ` Posts from ${month}/${year}.`;
-
+const title = SITE_TITLE + ` -- Posts from ${month}/${year}.`;
 ---
 
-<Base title={SITE_TITLE} {description}>
+<Base title={title} description={SITE_DESCRIPTION}>
 	<BlogList {page} {Number(year)} {Number(month) - 1} />
 </Base>

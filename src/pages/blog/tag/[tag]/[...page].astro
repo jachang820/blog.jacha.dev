@@ -9,14 +9,13 @@ import { getUniqueTags, sortByDateDesc } from '../../../../helpers';
 type BlogPost = CollectionEntry<'blog'>;
 
 export const getStaticPaths = (async ({ paginate }) => {
-	const posts = await getCollection('blog');
+	const posts = (await getCollection('blog')).sort(sortByDateDesc);
 	const tags = getUniqueTags(posts);
 
 	return tags.flatMap((tag) => {
 		const filteredPosts = posts
 			.filter((post: BlogPost) => 
-				post.data.tags?.map((s) => s.toLowerCase())?.includes(tag))
-			.sort(sortByDateDesc);
+				post.data.tags?.map((s) => s.toLowerCase())?.includes(tag));
 
 		return paginate(filteredPosts, {
 			params: { tag },
@@ -29,10 +28,9 @@ type Params = { tag: string };
 
 const { tag } = Astro.params as Params;
 const { page } = Astro.props;
-const description = SITE_DESCRIPTION + ` Posts about ${tag}.`;
-
+const title = SITE_TITLE + ` -- Posts about ${tag}.`;
 ---
 
-<Base title={SITE_TITLE} {description}>
+<Base title={title} description={SITE_DESCRIPTION}>
 	<BlogList {page} {tag} />
 </Base>

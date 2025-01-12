@@ -5,12 +5,12 @@ pubDate: 'Jul 09 2024'
 tags: ['AWS', 'Python', 'Markdown']
 ---
 
-```svelte meta="---"
+```svelte meta=---
 ---
-title="src/content/blog/code-2"
-directory-level-fade=1
+title=/src/content/blog/code-2
+dir-level-fade=1
 start-line=9
-highlight=[12,14]
+highlight=[11:/blank|verbatim/]
 ---
 <script>
 // [!code annotation] This is the first line.
@@ -25,7 +25,7 @@ highlight=[12,14]
 </script>
     <!--  [!code log] This is another line.-->
 <div>{prop}</div>
-<!--  [!code warning] This is another looooong longer line hoot hoot yoooooooooooooooo .-->
+<!--  [!code warning] This is a much longer post to test out browser width issues.-->
 <style>
     div {
         color: black;
@@ -40,5 +40,5 @@ This is inline code `const name = 'John';{:js}`. Isn't it amazing?
 > Quoth the raven, never more.
 > <cite>[Edgar Allen Poe](http://www.google.com)</cite>
 
-![image](/blog-placeholder-2.jpg)
+![image](/blog-placeholder-about.jpg)
 <cite>[Edgar Allen Poe](http://www.google.com)</cite>

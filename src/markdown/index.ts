@@ -1,16 +1,6 @@
 import type { ShikiConfig, AstroUserConfig } from 'astro';
 
-import { 
-    transformerNotationDiff,
-    transformerNotationErrorLevel
-} from '@shikijs/transformers';
-
-import metaExpandedMetaTransform from './transforms/meta';
-import metaHighlightTransform from './transforms/highlight';
-import metaLineNumberTransform from './transforms/linenumber';
-import metaFigureTransform from './transforms/figure';
-import renderWhitespaceTransform from './transforms/whitespace';
-import errorMessagesTransform from './transforms/errormessages';
+import transformer from './transformers';
 
 import highlightInlineCode from './inline-code';
 
@@ -22,16 +12,7 @@ const shikiConfig: Partial<ShikiConfig> = {
         dark: 'github-dark-dimmed',
     },
     defaultColor: false,
-    transformers: [
-        metaExpandedMetaTransform(), // preprocess, pre (clean-up)
-        errorMessagesTransform(), // line
-        transformerNotationDiff(), // code
-        transformerNotationErrorLevel(), // code
-        metaLineNumberTransform(), // pre
-        metaHighlightTransform(), // pre (must be after line number)
-        renderWhitespaceTransform(), // root
-        metaFigureTransform(), // root (must be last)
-    ]
+    transformers: [transformer]
 };
 
 const config: Partial<MarkdownConfig> = {

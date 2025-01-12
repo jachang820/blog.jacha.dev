@@ -34,12 +34,13 @@ const locationStyles: string = styles.join(' ');
 </details>
 
 <style>
+    @layer default, layout, specifics, override;
     @layer specifics {
         .hamburger {
-            --hamburger-color-light: #4c95ac;
-            --hamburger-color-light-open: #4b6b75;
-            --hamburger-color-dark: #c7d8dd;
-            --hamburger-color-dark-open: #9fb0b6;
+            --hamburger-color-light: var(--accent-light);
+            --hamburger-color-light-open: var(--accent-active-light);
+            --hamburger-color-dark: var(--accent-dark);
+            --hamburger-color-dark-open: var(--accent-active-dark);
             --hamburger-line-thickness: 6px;
             --hamburger-half-dim: calc(2.5 * var(--hamburger-line-thickness));
             --hamburger-full-dim: calc(5 * var(--hamburger-line-thickness));
@@ -74,6 +75,16 @@ const locationStyles: string = styles.join(' ');
                     }
                     @media (prefers-color-scheme: dark) {
                         background-color: var(--hamburger-color-dark);
+                    }
+                }
+
+                &:hover .icon-left, &:hover .icon-left::before, &:hover .icon-left::after,
+                &:hover .icon-right, &:hover .icon-right::before, &:hover .icon-right::after {
+                    @media (prefers-color-scheme: light) {
+                        background-color: var(--hamburger-color-light-open);
+                    }
+                    @media (prefers-color-scheme: dark) {
+                        background-color: var(--hamburger-color-dark-open);
                     }
                 }
 

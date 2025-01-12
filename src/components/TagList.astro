@@ -18,6 +18,8 @@ const { tags } = Astro.props;
 </div>
 
 <style>
+    @layer default, layout, specifics, override;
+    
     @layer specifics {
         .tag-list {
             display: flex;

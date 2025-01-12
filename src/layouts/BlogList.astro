@@ -89,6 +89,16 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
 </section>
 
 <style>
+    @layer default, layout, specifics, override;
+
+    :global(:root) {
+        --content-summary-box-border-color: rgb(168, 155, 180);
+        --content-summary-description-light: #333;
+        --content-summary-description-dark: #ebebeb;
+        --content-summary-box-bg-light: #e7ebee;
+        --content-summary-box-bg-dark: #343e4b;
+    }
+
     @layer override {
         & .tags :global(div) {
             justify-content: flex-start;
@@ -119,13 +129,13 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
                     width: 100%;
                     padding: 1rem;
                     border-radius: 0.25rem;
-                    border: 1px solid rgb(168, 155, 180);
+                    border: 1px solid var(--content-summary-box-border-color);
 
                     @media (prefers-color-scheme: light) {
-                        background-color: #e7ebee;
+                        background-color: var(--content-summary-box-bg-light);
                     }
                     @media (prefers-color-scheme: dark) {
-                        background-color: #343e4b;
+                        background-color: var(--content-summary-box-bg-dark);
                     }
 
                     & * {
@@ -164,10 +174,10 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
                         margin: 0.25rem 0.5rem;
 
                         @media (prefers-color-scheme: light) {
-                            color: #333;
+                            color: var(--content-summary-description-light);
                         }
                         @media (prefers-color-scheme: dark) {
-                            color: #ebebeb;
+                            color: var(--content-summary-description-dark);
                         }
                     }
 
