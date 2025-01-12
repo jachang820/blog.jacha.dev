@@ -6,8 +6,7 @@ import {
     createElement,
     inOrderTraversal,
     splitElement,
-    KeepSide,
-    getNodeText
+    KeepSide
 } from '../utils';
 import type { DevTransformer } from '../types';
 
@@ -46,7 +45,7 @@ const transformer: DevTransformer = {
         // Count whitespaces at beginning of line
         const regexp = /^[\t ]*/;
         let whitespaceCount = 0;
-        inOrderTraversal(line, null, 0, (node, parent, index) => {
+        inOrderTraversal(line, null, 0, (node, _parent, _index) => {
             if (node.type === 'text') {
                 const match = node.value.match(regexp);
                 if (match) {

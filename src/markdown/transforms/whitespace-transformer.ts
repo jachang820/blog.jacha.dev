@@ -30,7 +30,6 @@ const transformer: DevTransformer = {
         line = line as Element;
 
         // Don't transform lines with excluded properties
-        let classes = line.properties['class'];
         for (const prop of Object.keys(line.properties)) {
             if (excludeProps.has(prop)) {
                 return line;

@@ -127,7 +127,7 @@ export const getNodeText = (node: ElementContent): string => {
 
     // Aggregate all text from Text nodes
     let textParts: string[] = [];
-    inOrderTraversal(node, null, 0, (node, parent, index) => {
+    inOrderTraversal(node, null, 0, (node, _parent, _index) => {
         if (node.type === 'text') {
             textParts.push(node.value);
         }
