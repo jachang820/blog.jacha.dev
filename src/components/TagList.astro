@@ -3,7 +3,7 @@ import Tag from '../components/Tag.astro';
 
 interface Props {
     tags: string[],
-    align: string
+    align?: string
 }
 
 const { tags, align = "start" } = Astro.props;
