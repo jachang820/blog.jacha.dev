@@ -2,14 +2,16 @@
 import Tag from '../components/Tag.astro';
 
 interface Props {
-    tags: string[]
+    tags: string[],
+    align: string
 }
 
-const { tags } = Astro.props;
+const { tags, align = "start" } = Astro.props;
+
 
 ---
 
-<div class="tag-list">
+<div class="tag-list" tag-list-align={align}>
     {
         tags?.map((tag) => (
             <Tag name={tag} />
@@ -27,6 +29,14 @@ const { tags } = Astro.props;
             padding: 1rem;
             flex-wrap: wrap;
             gap: 5px 8px;
+
+            &[tag-list-align="start"] {
+                justify-content: start;
+            }
+
+            &[tag-list-align="center"] {
+                justify-content: center;
+            }
         }
     }
 </style>

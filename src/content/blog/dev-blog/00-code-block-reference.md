@@ -1,11 +1,9 @@
 ---
 title: 'Code Block Reference'
 description: 'I made my own syntax highlighted code block on top of Shiki.'
-pubDate: 'Dec 19 2024'
+pubDate: 'Dec 10 2024'
 tags: ['markdown', 'typescript']
 ---
-
-# Code Block Reference
 
 ## Code Block
 
@@ -102,7 +100,7 @@ const message = "Hello world!";
 console.log(message);
 ```
 ````
-```javascript start-line=99
+```javascript start-line=99;
 const message = "Hello world!";
 console.log(message);
 ```
@@ -154,7 +152,7 @@ if (true) {
 }
 ```
 
-"message" in both lines highlighted and assigned the attribute `data-highlighted-id = "message"`:
+"message" in both lines highlighted and assigned the attribute `data-highlighted-id = "message"{:typescript}`:
 ````markdown
 <style>
     [data-highlighted-id="message"] {
@@ -191,7 +189,6 @@ console.log(message);
 
 We can also select the range with a string to match:
 ````markdown
-
 ```javascript highlight=[2:"message"]
 const message = "Hello world!";
 console.log(message); // "message" highlighted
@@ -291,7 +288,7 @@ myHeading.textContent = "Hello world!";
 
 ### Diff
 
-Diff transformers are imported from [Shiki transformers](https://github.com/shikijs/shiki/blob/main/packages/transformers/src/transformers/notation-diff.ts). Adding `[!code ++]` and `[!code --]` in comments at the end of a line gives the line some additional classes, which are used to highlight them and prefix them with "++" and "--" respectively, specifying them as changes from an original code.
+Diff transformers are inspired from [Shiki transformers](https://github.com/shikijs/shiki/blob/main/packages/transformers/src/transformers/notation-diff.ts). Adding `[!code ++]` and `[!code --]` in comments at the end of a line gives the line some additional classes, which are used to highlight them and prefix them with "++" and "--" respectively, specifying them as changes from an original code. The remove diff lines do not count toward the line number.
 
 ````markdown
 ```typescript

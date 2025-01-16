@@ -1,11 +1,13 @@
 ---
 title: 'Astro: Dynamic routes with params and pagination'
 description: 'An example of paginated listings of posts by tag, using the Astro framework.'
-pubDate: 'Dec 24 2024'
+pubDate: 'Dec 28 2024'
 tags: ['Astro', 'typescript']
 ---
 
 The internet is replete with examples of creating dynamic routes using Astro. Look for paginated routes with parameters and Typescript, however, and the results all seem a little incomplete. For a beginner like I am, it wasn't entirely clear how the different examples in the documentation work together. So let's walk through this.
+
+## Dissecting getStaticPaths
 
 I think the first thing that was slightly confusing for me was that non-paginated routes look like this for example:
 ```astro meta=---;
@@ -63,6 +65,8 @@ export const getStaticPaths = (async () => {
 First, note the change in structure from the posts being passed as props to being a direct argument of `paginate`. It would have been more clear if it still passes through props, maybe with a predetermined property name, and whereas maybe `pageSize` becomes a direct argument in my opinion. 
 
 Second, despite this being the latest version of the docs, the example uses outdated constructs like `import.meta.glob{:ts}`. It also avoids any Typescript typing (that exists from prior examples from the same page), which begs the question whether e.g. `satisfies GetStaticPaths{:ts}` is even compatible with pagination. I'm happy to report that it is, and the example in the documentation is just outdated. 
+
+## Some pitfalls
 
 Of particular, I had a question of why `flatMap` is necessary, since it seems like a single object is being returned. But upon closer inspection, the `paginate` function actually wraps each single result with an array. I found this to be a pitfall, since it was unintuitive why that would be the case.
 

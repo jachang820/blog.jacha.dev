@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import Error404 from '../layouts/404.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const title = SITE_TITLE + ' -- 404.';
+---
+
+<Base title={title} description={SITE_DESCRIPTION}>
+	<Error404 />
+</Base>

@@ -37,12 +37,12 @@
 		line-height: 1.7;
 
 		@media (prefers-color-scheme: light) {
-			background: linear-gradient(var(--gray-gradient)) no-repeat;
+			background: rgba(var(--gray-light), 50%);
 			color: rgb(var(--gray-dark));
 		}
 
 		@media (prefers-color-scheme: dark) {
-			background: linear-gradient( rgb(34 41 57),rgb(46, 49, 59)) no-repeat;
+			background: rgb(34 41 57);
 			color: whitesmoke;
 		}
 	}

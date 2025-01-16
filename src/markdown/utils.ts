@@ -1,52 +1,21 @@
-import type { CodeOptionsMeta } from 'shiki';
 import type { ElementContent, Element, Text, Properties } from 'hast';
-import type { CommentTransformerMeta, TraversalFunction } from './types';
-
-export const parseMeta = (
-    options: CodeOptionsMeta, 
-    commandName: string
-): string | null => {
-
-    let value = null;
-    if (options.meta) {
-        if (commandName in options.meta) {
-            value = options.meta[commandName].trim();
-        }
-        else if (options.meta.__raw) {
-            options.meta.__raw.split(';').forEach((option) => {
-                const [key, value_string] = option.trim().split('=');
-                if (key.trim() === commandName) {
-                    value = value_string.trim();
-                }
-            });
-        }
-    }
-    
-    return value;
-};
+import type { TraversalFunction } from './types';
 
 export const metaKey = 'devblog:meta';
 
-export const parseIntMeta = (meta: string): number | null => {
-    if (meta) meta = meta.trim();
-    return parseInt(meta) || null;
+export const parseIntMeta = (meta?: string): number | null => {
+    if (meta) {
+        const num = parseInt(meta.trim());
+        return !isNaN(num) ? num : null;
+    }
+    else {
+        return null;
+    }
 };
 
-export const parseStringMeta = (meta: string): string | null => {
+export const parseStringMeta = (meta?: string): string | null => {
     if (meta) meta = meta.trim();
     return meta || null;
-};
-
-export const detectCommentTransformer = (
-    line: string, 
-): CommentTransformerMeta | null => {
-    const regexp = /(?:\/\/|\/\*|<!--|#|--|%{1,2}|;{1,2}|"|')\s*\[!code\s*([^\]]+?)\s*\]\s*(.*?)\s*(?:\*\/|-->)?$/;
-    const match = line.match(regexp);
-    if (match) {
-        const [_comment, keyword, message] = match;
-        return { keyword, message, index: match.index! };
-    }
-    return null;
 };
 
 export const cloneElement = (node: Element): Element => {
@@ -183,9 +152,9 @@ export const splitElement = (
        split text node. */
     const splitChain: SiblingElement[] = [];
     let splitNode: Element | null = null;
+    let resume = true;
     inOrderTraversal(node, null, 0, (node, parent, index) => {
         let lastChainIndex = splitChain.length - 1;
-        let resume = true;
         if (node.type === 'element' && node.children.length > 0) {
             /* If parent is the last node in the chain, then current
                node is a child. Otherwise, we remove nodes from the
@@ -212,6 +181,7 @@ export const splitElement = (
                             newText.value = leftText;
                             firstChild.value = rightText;
                         }
+        
                         splitNode = cloneElement(node);
                         splitNode.children = [newText];
                     }
@@ -231,6 +201,10 @@ export const splitElement = (
     for (let i = splitChain.length - 2; i >= 0; i--) {
         const parent = splitChain[i].node as Element;
         let splitChildIndex = splitChain[i + 1].index;
+        // Split was never made since splitIndex is at the end
+        if (resume) {
+            splitChildIndex++;
+        }
         // Select which side to return
         const children: ElementContent[] = [];
         if (splitNode && keepSide === KeepSide.Left) {

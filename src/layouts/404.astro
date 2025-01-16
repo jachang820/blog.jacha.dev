@@ -1,0 +1,46 @@
+<article>
+	<header class="title">
+		<h1>404</h1>
+		<h2>
+			I forgot...
+        </h2>
+</article>
+
+<style>
+    @layer default, layout, specifics, override;
+
+    @layer layout {
+        article {
+            height: 100%;
+        }
+
+        .title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+
+            & h1 {
+                font-size: 15rem;
+                margin-bottom: -2rem;
+                @media (prefers-color-scheme: light) {
+                    color: var(--accent-light);
+                }
+                @media (prefers-color-scheme: dark) {
+                    color: var(--accent-dark);
+                }
+            }
+
+            & h2 {
+                @media (prefers-color-scheme: light) {
+                    color: var(--accent-active-light);
+                }
+                @media (prefers-color-scheme: dark) {
+                    color: var(--accent-active-dark);
+                }
+            }
+        }
+    }
+</style>

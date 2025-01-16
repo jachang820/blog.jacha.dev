@@ -1,7 +1,7 @@
 ---
 title: 'Astro: Generating tag colors the easy way'
 description: 'Rather than manually assign tag colors in a database, we can generate deterministic tags using a hash.'
-pubDate: 'Dec 25 2024'
+pubDate: 'Dec 31 2024'
 tags: ['Astro', 'typescript']
 ---
 One common functionality when it comes to blogs are tags, or keywords, that categorize posts and make searching easier. Because we want more fine-tuned categories and we can't foresee every keyword that comes up in the future, it would be more convenient to go with a bottom-up approach, where the tags are defined from the posts as opposed to a central repository. With this workflow, we wouldn't want to sap our creative juice worrying about what colors and properties to assign each tag at the same time that we are writing an article. It would be convenient, then, that tags are automatically assigned a color.

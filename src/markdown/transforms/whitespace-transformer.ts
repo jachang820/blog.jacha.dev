@@ -36,7 +36,7 @@ const transformer: DevTransformer = {
             }
         }
 
-        const tabSize: number = meta[metaKey].get('tab-size') || 4;
+        const tabSize: number = meta[metaKey].get('tab-size');
         const propMap = new Map<string, string>([
             [' ', 'data-line-space'],
             ['\t', 'data-line-tab'],
@@ -52,10 +52,9 @@ const transformer: DevTransformer = {
 
                 // Ignore whitespace that has already been processed
                 if (text.length === 1) {
-                    const firstChar = text.slice(0, 1);
                     if (
-                        propMap.has(firstChar) && 
-                        propMap.get(firstChar)! in node.properties
+                        propMap.has(text) && 
+                        propMap.get(text)! in node.properties
                     ) {
                         return true;
                     }
@@ -64,17 +63,19 @@ const transformer: DevTransformer = {
                 // Iterate space, tabs, or text
                 const parts: Element[] = [];
                 for (const part of text.split(/([ \t])/)) {
-                    const clone = cloneElement(node);
-                    clone.children = [{ type: 'text', value: part }];
-                    // Part is space or tab, so remove text styling
-                    if (propMap.has(part)) {
-                        clone.properties[propMap.get(part)!] = '';
-                        delete clone.properties.style;
-                        if (part === '\t') {
-                            clone.properties['style'] = `tab-size: ${tabSize};`;
+                    if (part.length > 0) {
+                        const clone = cloneElement(node);
+                        clone.children = [{ type: 'text', value: part }];
+                        // Part is space or tab, so remove text styling
+                        if (propMap.has(part)) {
+                            clone.properties[propMap.get(part)!] = '';
+                            delete clone.properties.style;
+                            if (part === '\t') {
+                                clone.properties['style'] = `tab-size: ${tabSize};`;
+                            }
                         }
+                        parts.push(clone);
                     }
-                    parts.push(clone);
                 }
                 /* Delete original element, replace with element delimited by 
                    whitespaces. */
@@ -104,6 +105,13 @@ const transformer: DevTransformer = {
         }
 
         return line;
+    },
+    styleElements(pre, meta, _) {
+        const tabSize: number = meta[metaKey].get('tab-size');
+        const code = pre.children[0] as Element;
+        code.properties['style'] = code.properties['style'] || '';
+        code.properties['style'] += `--shiki-line-code-indent: ${tabSize}ch;`;
+        return pre;
     }
 };
 

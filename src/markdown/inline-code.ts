@@ -7,6 +7,7 @@ import {
     bundledLanguages,
     bundledThemes,
     getSingletonHighlighterCore,
+    type HighlighterCore,
     type ThemeRegistration,
     type ThemeRegistrationRaw,
 } from 'shiki';
@@ -48,6 +49,26 @@ const resolveTheme = (themeText: ThemeTypes): ThemeInput => {
     return bundledThemes[(themeText! as string) as BundledTheme];
 };
 
+const loadLanguage = async (
+    highlighter: HighlighterCore, 
+    instance: InlineCodeInstance,
+    loadedLanguages: Set<string>
+): Promise<void> => {
+    if (!loadedLanguages.has(instance.language)) {
+        const lang = resolveLanguage(instance.language);
+        if (lang) {
+            await highlighter.loadLanguage(lang);
+        }
+        else {
+            console.error(
+                "Invalid language on inline code, using 'plaintext' instead.",
+                instance.code);
+            instance.language = 'plaintext';
+        }
+        loadedLanguages.add(instance.language);
+    }
+};
+
 const regexp = /^(.+){:(\w+)}$/;
 
 const highlightInlineCode = () => {
@@ -62,21 +83,25 @@ const highlightInlineCode = () => {
     return async (tree: Root) => {
 
         const instances: InlineCodeInstance[] = [];
+        const loadedLanguages: Set<string> = new Set(['plaintext']);
         let counter = 0;
 
         // Retrieve all instances of inline code in document
         visit(tree, 'element', (node: Element, 
-                                _: number | undefined, // index
+                                _index: number | undefined,
                                 parent: Element | Root | undefined) => {
 
             if (isInlineCode(node, parent)) {
                 const textNode = node.children[0] as Text;
                 const value = textNode.value;
                 const match = value.match(regexp);
-                if (match && parent) {
-                    const [_, code, language] = match;
+                if (match) {
+                    const [_matchText, code, language] = match;
                     instances.push({ node, code, language });
                     counter++;
+                }
+                else {
+                    instances.push({ node, code: value, language: 'plaintext' });
                 }
             }
         });
@@ -85,15 +110,15 @@ const highlightInlineCode = () => {
 
         for (const instance of instances) {
             // Load language
-            await highlighter.loadLanguage(resolveLanguage(instance.language))
+            await loadLanguage(highlighter, instance, loadedLanguages);
 
             // Syntax highlighted structure
-            const newParent = highlighter.codeToHast(instance.code, {
+            const newRoot = highlighter.codeToHast(instance.code, {
                 lang: instance.language, 
                 themes: shikiThemes,
                 defaultColor: false
             });
-            const newPre = newParent.children[0] as Element;
+            const newPre = newRoot.children[0] as Element;
             const newCode = newPre.children[0] as Element;
 
             // Replace class with astro-code to conform

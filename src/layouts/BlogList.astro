@@ -74,14 +74,14 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
         {
             page.url.prev && (
                 <a href={page.url.prev}>
-                    <button>Prev</button>
+                    <button class="prev-button">Prev</button>
                 </a>
             )
         }
         {
             page.url.next && (
                 <a href={page.url.next}>
-                    <button>Next</button>
+                    <button class="next-button">Next</button>
                 </a>
             )
         }
@@ -187,11 +187,17 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
                 }
             }
             & .pagination {
-                display: flex;
-                justify-content: space-between;
+                box-sizing: border-box;
+                display: inline-block;
+                width: 100%;
                 padding: 1rem;
 
-                & button {
+                & .prev-button {
+                    padding: 0.4rem 1rem;
+                }
+
+                & .next-button {
+                    float: right;
                     padding: 0.4rem 1rem;
                 }
 

@@ -17,7 +17,17 @@ const transformer: DevTransformer = {
     name: transformerName,
     register: new Map<string, ParseMetaFunction>([
         ['title', (keyword) => parseStringMeta(keyword)],
-        ['dir-level-fade', (keyword) => parseIntMeta(keyword)]
+        ['dir-level-fade', (keyword) => parseIntMeta(keyword)],
+        ['add-classes', (keyword) => {
+            if (keyword) {
+                const regexp = /[a-z0-9-]+/g;
+                const matches = keyword.match(regexp);
+                return matches ? [...matches] : null;
+            }
+            else {
+                return null;
+            }
+        }]
     ]),
     styleElements: (pre, meta, _) => {
         pre = pre as Element;
@@ -59,7 +69,7 @@ const transformer: DevTransformer = {
         // Split title by directory
         const titleLevels = title?.split('/');
 
-        if (title && level) {
+        if (title && level !== null) {
             if (level < 0 || level >= titleLevels!.length) {
                 console.error("Directory level out of range. Fade will not be in effect");
                 level = null;
@@ -68,7 +78,7 @@ const transformer: DevTransformer = {
         else if (!title) {
             level = null;
         }
-
+        
         // Get existing code
         const pre = root.children[0] as Element;
         const lang = pre.properties['dataLanguage'] as string;
@@ -79,7 +89,12 @@ const transformer: DevTransformer = {
         const figcaptionStyles: string = meta[transformerName];
 
         // Create a figure element
+        const classes = meta[metaKey].get('add-classes');
         const figure = createElement('figure', { 'data-code-block-figure': '' });
+        if (classes) {
+            figure.properties['class'] = classes;
+        }
+        
         const figCaption = createElement('figcaption', {
             'style': figcaptionStyles,
             'data-code-caption': '',
@@ -92,18 +107,35 @@ const transformer: DevTransformer = {
         const figLanguage = createElement('span', { 'data-code-title-language': '' });
         figLanguage.children = [{ type: 'text', value: lang }];
 
-        if (level) {
-            const fadeText = titleLevels!.slice(0, level + 1).join('/');
-            const fadeTextSpan = createElement('span', { 'data-code-title-fade': '' });
+        if (titleLevels && typeof level === 'number') {
+            const fadeText = titleLevels.slice(0, level + 1).join('/');
+            const fadeTextSpan = createElement('span', 
+                { 'data-code-title-prefix': 'fade' });
             fadeTextSpan.children = [{ type: 'text', value: fadeText }];
             figTitle.children.push(fadeTextSpan);
 
             if (level < titleLevels!.length - 1) {
                 const mainText = '/' + titleLevels!.slice(level + 1).join('/');
-                const mainTextSpan = createElement('span', {'data-code-title-main': ''});
+                const mainTextSpan = createElement('span', 
+                    {'data-code-title-main': 'fade'});
                 mainTextSpan.children = [{ type: 'text', value: mainText }];
                 figTitle.children.push(mainTextSpan);
             }
+        }
+        // Bold root/domain if fade not specified
+        else if (titleLevels && 
+                titleLevels.length > 0 && titleLevels[0].length > 0) {
+            const rootText = titleLevels.slice(0, 1).join('/');
+            const rootTextSpan = createElement('span', 
+                { 'data-code-title-prefix': 'root' });
+            rootTextSpan.children = [{ type: 'text', value: rootText }];
+            figTitle.children.push(rootTextSpan);
+
+            const mainText = '/' + titleLevels.slice(1).join('/');
+            const mainTextSpan = createElement('span', {
+                'data-code-title-main': ''});
+            mainTextSpan.children = [{ type: 'text', value: mainText }];
+            figTitle.children.push(mainTextSpan);
         }
         else {
             figTitle.children.push({

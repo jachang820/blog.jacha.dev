@@ -1,7 +1,7 @@
 import type { CodeOptionsMeta } from 'shiki';
 import type { Element, ElementContent, Root } from 'hast';
 
-export type ParseMetaFunction = (keyword: string) => unknown;
+export type ParseMetaFunction = (keyword?: string) => unknown;
 
 type PreprocessFunction = (
     code: string, 

@@ -1,6 +1,5 @@
 import type { Element, Text } from 'hast';
 import { 
-    metaKey, 
     parseIntMeta, 
     alterRGB, 
     createElement,
@@ -22,7 +21,7 @@ const transformer: DevTransformer = {
     register: new Map([
         ['start-line', (keyword) => parseIntMeta(keyword) || 1]
     ]),
-    transform: (line, meta, { index, numberingMap }: Params) => {
+    transform: (line, _meta, { index, numberingMap }: Params) => {
         /* 
             Hook: line
             Params:
@@ -32,9 +31,7 @@ const transformer: DevTransformer = {
         */
         line = line as Element;
 
-        const startLine = meta[metaKey].get('start-line') || 1;
-        const baseNumber = numberingMap.get(index);
-        const lineNumber = baseNumber ? baseNumber + startLine - 1 : null;
+        const lineNumber = numberingMap.get(index);
 
         // Create spans to hold line number and wrap code
         const lineNumberText: Text = {
@@ -76,15 +73,14 @@ const transformer: DevTransformer = {
 
         return line;
     },
-    styleElements: (pre, meta, _) => {
+    styleElements: (pre, _meta, numberingMap: Map<number, number | null>) => {
         pre = pre as Element;
-        const startLine = meta['start-line'];
         const code = pre.children[0] as Element;
-        const lineCount = code.children.length;
-        const lastLine = startLine + lineCount - 1;
+        const lastLine = [...numberingMap.values()]
+            .findLast((n) => n)!;
         const numDigits = lastLine.toString().length;
 
-        code.properties['data-line-number-max-digits'] = numDigits;
+        code.properties['data-line-number-max-digits'] = numDigits.toString();
 
         const newStyles: string[] = [];
         (pre.properties['style'] as string).split(';').forEach((style) => {

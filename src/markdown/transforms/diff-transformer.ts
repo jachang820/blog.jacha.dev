@@ -19,7 +19,7 @@ const transformer: DevTransformer = {
             if (keywords.includes(commentMeta.keyword)) {
                 meta[transformerName].set(index + 1, commentMeta);
                 // Remove comment from line
-                lines[index] = lines[index].slice(0, commentMeta.index) 
+                lines[index] = lines[index].slice(0, commentMeta.index);
             }
         });
         

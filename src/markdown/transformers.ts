@@ -56,19 +56,15 @@ const transformer: ShikiTransformer = {
         code = MetaTransformer.setup!(code, meta, undefined);
 
         // Parse rest of meta
-        (meta[metaKey] as Map<string, any>).forEach((value, keyword) => {
-            if (parser.has(keyword)) {
-                const parseFn = parser.get(keyword)!;
-                meta[metaKey].set(keyword, parseFn(value as string));
-            }
+        parser.forEach((parseFn, optName) => {
+            const value: string | undefined = meta[metaKey].get(optName);
+            (meta[metaKey] as Map<string, any>).set(optName, parseFn(value));
         });
-        
+
         // Run all setup functions
-        for (const t of transformers) {
-            if (t.setup) {
-                code = t.setup(code, meta, undefined);
-            }
-        }
+        const startLine: number = meta[metaKey].get('start-line');
+        code = CommentTransformer.setup!(code, meta, startLine);
+        code = HighlightTransformer.setup!(code, meta, null);
 
         return code;
     },
@@ -80,21 +76,24 @@ const transformer: ShikiTransformer = {
            Separating out whitespace before code helps with indentation
            when code is wrapped on a long line. */
         const commentKey = CommentTransformer.name;
-        const numberingMap = meta[commentKey];
-
+        const numberingMap: Map<number, number | null> = meta[commentKey];
+        
         LineNumberTransformer.transform!(line, meta, 
             { index, numberingMap });
-
+        
         // Add messages and diff classes for relevant lines
         CommentTransformer.transform!(line, meta, index);
 
         // Highlight relevant lines and phrases
-        const startLine = meta[metaKey].get('start-line');
         HighlightTransformer.transform!(line, meta, 
-            { index, numberingMap, startLine });
+            { index, numberingMap });
 
         // Split whitespaces into their own spans
-        const excludeProps = new Set(['data-line-message', 'data-line-diff']);
+        const excludeProps = new Set([
+            'data-line-message', 
+            'data-line-diff',
+            'data-line-page-break'
+        ]);
         WhitespaceTransformer.transform!(line, meta,
             { index, excludeProps });
 
@@ -103,8 +102,11 @@ const transformer: ShikiTransformer = {
     pre(pre) {
         // Run all style functions
         const meta = this.options.meta!;
-        LineNumberTransformer.styleElements!(pre, meta, null);
+        const commentKey = CommentTransformer.name;
+        const numberingMap: Map<number, number | null> = meta[commentKey];
+        LineNumberTransformer.styleElements!(pre, meta, numberingMap);
         HighlightTransformer.styleElements!(pre, meta, null);
+        WhitespaceTransformer.styleElements!(pre, meta, null);
         FigureTransformer.styleElements!(pre, meta, null);
 
         // Run all cleanup functions

@@ -1,10 +1,12 @@
 ---
 title: 'Astro: Archives by year and month'
 description: 'Astro allows categorizing and sorting posts by date, even without client-side Javascript.'
-pubDate: 'Dec 26 2024'
+pubDate: 'Jan 4 2025'
 tags: ['Astro', 'typescript']
 ---
 Sorting and categorizing by years then months is useful over any collection of posts. The posts are usually displayed via an accordion by year, which expands to more fine-grained categories. Creating this should be straightforward for anyone who is used to using Javascript, but for those who only recently got their feet wet or haven't used it in a while, like me, there are several useful things to note. We will be creating an Astro component for this, and routing will be done using `getStaticPaths` to keep the site static.
+
+## The routing
 
 The general idea of `getStaticPaths` has been covered in a [prior blog](/blog/2024-12-24-astro-dynamic-routes-with-params-and-pagination/), but I will make a note of things to pay attention to using annotations in the code.
 
@@ -59,6 +61,8 @@ const { year, month } = Astro.params as Params;
 const { page } = Astro.props;
 ---
 ```
+
+## The component
 
 Anyways, the layout of the page isn't so interesting. What's important is that we now have a route for each year and month that there are posts. Next we apply a similar technique to get the component to list the categories.
 
