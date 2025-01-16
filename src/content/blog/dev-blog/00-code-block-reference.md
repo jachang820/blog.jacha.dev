@@ -239,8 +239,21 @@ title = /src/pages/blog/tag/[tag]/[page].astro
 dir-level-fade = 2
 ---
 ```astro meta=---
+---
 title = /src/pages/blog/tag/[tag]/[page].astro
 dir-level-fade = 2
+---
+```
+````
+On the other hand, when `dir-level-fade` isn't specified and there is a domain or name before the first slash, then that name is automatically bolded. For example,
+````markdown meta=---
+---
+title = mozilla.org/en-US/docs/Web
+---
+```astro meta=---
+---
+title = mozilla.org/en-US/docs/Web
+---
 ```
 ````
 
@@ -332,6 +345,54 @@ The other messages look like
 # [!code warning] This is a warning. 
 # [!code error] This is an error. 
 ```
+
+### Skip Lines
+Lines beginning with a comment and `[!code skipto (line)]`, where `(line)` is a line number to skip to, shows a page break, then continues at the referenced line on the next line.
+````markdown
+```typescript start-line=67
+const some_function (input: string): void => {
+    return some_value;
+};
+// [!coԁe skipto 138]
+const some_other_function (input: string): void => {
+    return some_other_value;
+};
+```
+````
+```typescript start-line=67
+const some_function (input: string): void => {
+    return some_value;
+};
+// [!code skipto 138]
+const some_other_function (input: string): void => {
+    return some_other_value;
+};
+```
+
+### add-classes: string
+In some cases, it might be desirable to create a code-block with one (or two) off styling. This can be done by adding a unique class on the outer `<figure>{:html}` tag.
+````markdown
+<style>
+    .unique-class .line span {
+        font-size: 2rem;
+        text-shadow: #333 1px 0 10px;
+    }
+</style>
+
+```typescript add-classes=unique-class another-class;
+console.log("magnified!");
+```  
+````
+<style>
+    .unique-class .line span {
+        font-size: 2rem;
+        text-shadow: #333 1px 0 10px;
+    }
+</style>
+
+```typescript add-classes=unique-class another-class;
+console.log("magnified!");
+```  
 
 
 ## Inline Code
