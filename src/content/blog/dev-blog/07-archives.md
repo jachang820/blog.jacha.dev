@@ -8,11 +8,11 @@ Sorting and categorizing by years then months is useful over any collection of p
 
 ## The routing
 
-The general idea of `getStaticPaths` has been covered in a [prior blog](/blog/2024-12-24-astro-dynamic-routes-with-params-and-pagination/), but I will make a note of things to pay attention to using annotations in the code.
+The general idea of `getStaticPaths` has been covered in a [prior blog](/2024-12-28-astro-dynamic-routes-with-params-and-pagination/), but I will make a note of things to pay attention to using annotations in the code.
 
 ```astro meta=---;
 ---
-title=/src/pages/blog/[year]/[month]/[...page].astro
+title=/src/pages/[year]/[month]/[...page].astro
 dir-level-fade=2
 highlight=[14,18]
 ---

@@ -41,7 +41,7 @@ const open = true;
                     {
                         Array.from(postsByYear.get(year)!).map((month) => (
                             <li>
-                                <a href={`/blog/${year}/${month + 1}`}>
+                                <a href={`/${year}/${month + 1}`}>
                                     {monthNames[month]}, {year}
                                 </a>
                             </li>

@@ -12,7 +12,7 @@ The internet is replete with examples of creating dynamic routes using Astro. Lo
 I think the first thing that was slightly confusing for me was that non-paginated routes look like this for example:
 ```astro meta=---;
 ---
-title=/src/pages/blog/tag/[tag].astro
+title=/src/pages/tag/[tag].astro
 dir-level-fade=2
 ---
 ---
@@ -36,7 +36,7 @@ export const getStaticPaths = (async () => {
 However, according to Astro's Routing Reference, this is what paginated routes look like:
 ```astro meta = ---;
 ---
-title = /src/pages/blog/tag/[tag]/[page].astro
+title = /src/pages/tag/[tag]/[page].astro
 dir-level-fade = 2
 highlight = [7:"flatMap"]
 ---
@@ -74,7 +74,7 @@ Continuing on, Typescript Configuration in Astro's docs suggests to infer `getSt
 
 ```astro meta = ---;
 ---
-title=/src/pages/blog/tag/[tag]/[page].astro
+title=/src/pages/tag/[tag]/[page].astro
 dir-level-fade=2
 ---
 ---
@@ -103,7 +103,7 @@ It seems visually odd that it isn't `const {page} = Astro.props as Props{:ts}`, 
 In the end, I find that the following works just as well, if not better.
 ```astro meta = ---;
 ---
-title=/src/pages/blog/tag/[tag]/[page].astro
+title=/src/pages/tag/[tag]/[page].astro
 dir-level-fade=2
 highlight=[7:"flatMap"]
 ---
