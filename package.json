@@ -7,7 +7,7 @@
     "build": "astro check && astro build && pagefind --site dist && cp -r dist/pagefind public/",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "aws s3 sync ./dist s3://blog.jacha.dev"
+    "deploy": "aws s3 sync ./dist s3://blog.jacha.dev --delete"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

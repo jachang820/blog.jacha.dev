@@ -27,7 +27,8 @@ const transformer: DevTransformer = {
             else {
                 return null;
             }
-        }]
+        }],
+        ['directory-separator', (keyword) => parseStringMeta(keyword) || '/']
     ]),
     styleElements: (pre, meta, _) => {
         pre = pre as Element;
@@ -65,9 +66,10 @@ const transformer: DevTransformer = {
         */
         const title = meta[metaKey].get('title');
         let level = meta[metaKey].get('dir-level-fade');
+        const separator = meta[metaKey].get('directory-separator');
 
         // Split title by directory
-        const titleLevels = title?.split('/');
+        const titleLevels = title?.split(separator);
 
         if (title && level !== null) {
             if (level < 0 || level >= titleLevels!.length) {
@@ -108,14 +110,14 @@ const transformer: DevTransformer = {
         figLanguage.children = [{ type: 'text', value: lang }];
 
         if (titleLevels && typeof level === 'number') {
-            const fadeText = titleLevels.slice(0, level + 1).join('/');
+            const fadeText = titleLevels.slice(0, level + 1).join(separator);
             const fadeTextSpan = createElement('span', 
                 { 'data-code-title-prefix': 'fade' });
             fadeTextSpan.children = [{ type: 'text', value: fadeText }];
             figTitle.children.push(fadeTextSpan);
 
             if (level < titleLevels!.length - 1) {
-                const mainText = '/' + titleLevels!.slice(level + 1).join('/');
+                const mainText = separator + titleLevels!.slice(level + 1).join(separator);
                 const mainTextSpan = createElement('span', 
                     {'data-code-title-main': 'fade'});
                 mainTextSpan.children = [{ type: 'text', value: mainText }];
@@ -125,13 +127,13 @@ const transformer: DevTransformer = {
         // Bold root/domain if fade not specified
         else if (titleLevels && 
                 titleLevels.length > 0 && titleLevels[0].length > 0) {
-            const rootText = titleLevels.slice(0, 1).join('/');
+            const rootText = titleLevels.slice(0, 1).join(separator);
             const rootTextSpan = createElement('span', 
                 { 'data-code-title-prefix': 'root' });
             rootTextSpan.children = [{ type: 'text', value: rootText }];
             figTitle.children.push(rootTextSpan);
 
-            const mainText = '/' + titleLevels.slice(1).join('/');
+            const mainText = separator + titleLevels.slice(1).join(separator);
             const mainTextSpan = createElement('span', {
                 'data-code-title-main': ''});
             mainTextSpan.children = [{ type: 'text', value: mainText }];

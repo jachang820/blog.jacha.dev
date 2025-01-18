@@ -257,6 +257,16 @@ title = mozilla.org/en-US/docs/Web
 ```
 ````
 
+### directory-separator: string
+
+The default directory separator on the title is a forward slash (`/`); however, this can be changed. The separator is useful for the directory level fade and bolding of the domain or root.
+
+````markdown title=C:\Users\Name\MyDocuments\example.md; directory-separator=\
+```markdown title=C:\Users\Name\MyDocuments\example.md; directory-separator=\
+# Header 1
+```
+````
+
 ### tab-size: integer
 
 Whitespaces in the code are automatically converted to symbols representing spaces or tabs, for easier reading in my opinion. `tab-size` specifies the number of spaces that a tab takes up.
