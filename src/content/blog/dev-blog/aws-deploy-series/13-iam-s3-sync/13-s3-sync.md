@@ -79,9 +79,11 @@ However, this could be a waste of bandwidth and requests since most files are no
 1. The file size has changed.
 2. The file has a newer create or modified date.
 
-There is a `--size-only` option to ignore modified dates, in case the build system appends file hashes to the filename to detect changes that way. By default, the sync only adds newly created files or files that have been changed. It doesn't delete any files on the destination, unless the `--delete` flag is used. For our purposes, since the newer version should always be local, the synchronization should go from local to the S3 bucket, with the deleted files removed.
+There is a `--size-only` option to ignore modified dates. We will be using this because Astro updates all `.html{:shell}`, `.css{:shell}` and `.js{:shell}` files even if they haven't been changed. Using size only comes with the peril that if a page doesn't change in length (e.g. a color changes in CSS, or a paragraph is rewritten to the same number of characters), the file isn't pushed to the bucket. This might be solved by appending a hash of the file at the end of every path, though at the cost of possibly making bookmarking a page harder. Well, that can be decision made at a later date.
+
+Also, by default the sync only adds newly created files or files that have been changed. It doesn't delete any files on the destination, unless the `--delete` flag is used. For our purposes, since the newer version should always be local, the synchronization should go from local to the S3 bucket, with the deleted files removed.
 ```shell
-aws s3 sync ./dist s3://my-bucket-name/ --delete
+aws s3 sync ./dist s3://my-bucket-name/ --size-only --delete
 ```
 
 Rather than remember this command, it might be easier to add it to an `npm run` script in `/package.json`.
@@ -95,7 +97,7 @@ Rather than remember this command, it might be easier to add it to an `npm run` 
         "build": "astro check && astro build && pagefind --site dist && cp -r dist/pagefind public/",
         "preview": "astro preview",
         "astro": "astro",
-        "deploy": "aws s3 sync ./dist s3://my-blog-name --delete"
+        "deploy": "aws s3 sync ./dist s3://my-bucket-name --size-only --delete"
     },
     "dependencies": {
         //... skipped for this example
