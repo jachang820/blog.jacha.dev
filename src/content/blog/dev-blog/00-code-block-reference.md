@@ -73,7 +73,7 @@ However, this starts to get pretty unweldy. With more options, it would be desir
 ---
 title=Example
 start-line=5
-highlight=[5-6,8]
+highlight=[5, 7-9]
 ---
 // some code
 ```
@@ -82,12 +82,14 @@ highlight=[5-6,8]
 ---
 title=Example
 start-line=5
-highlight=[5-6,8]
+highlight=[5, 7-9]
 ---
 // Retrieve all instances of inline code in document
-visit(tree, 'element', (node: Element, 
-                        _: number | undefined, // index
-                        parent: Element | Root | undefined) => {
+visit(tree, 'element', (
+    node: Element, 
+    _index: number | undefined,
+    parent: Element | Root | undefined
+) => {
 ```
 
 ### start-line: integer

@@ -126,7 +126,7 @@ const transformer: DevTransformer = {
         }
         // Bold root/domain if fade not specified
         else if (titleLevels && 
-                titleLevels.length > 0 && titleLevels[0].length > 0) {
+                titleLevels.length > 1 && titleLevels[0].length > 0) {
             const rootText = titleLevels.slice(0, 1).join(separator);
             const rootTextSpan = createElement('span', 
                 { 'data-code-title-prefix': 'root' });
