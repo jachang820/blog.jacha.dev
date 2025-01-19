@@ -33,7 +33,7 @@ const title = SITE_TITLE + ` -- Posts about ${tag}.`;
 
 <Base title={title} description={SITE_DESCRIPTION}>
 	<Fragment slot="head">
-		<meta http-equiv="Cache-Control" content="max-age=0, must-revalidate"/>
+		<meta http-equiv="Cache-Control" content="no-cache"/>
 	</Fragment>
 	<BlogList {page} {tag} />
 </Base>

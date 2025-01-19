@@ -10,5 +10,8 @@ import { SITE_URL } from './src/consts';
 export default defineConfig({
     site: SITE_URL,
     integrations: [sitemap(), svelte()],
-    markdown: markdownConfig
+    markdown: markdownConfig,
+    build: {
+        format: 'preserve'
+    }
 });

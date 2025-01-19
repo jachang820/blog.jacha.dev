@@ -1,6 +1,8 @@
 
-import { type CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import slugify from 'slugify';
+import { xxHash32 } from 'js-xxhash';
+const initialSeed = 42;
 
 type BlogPost = CollectionEntry<'blog'>;
 
@@ -51,4 +53,24 @@ export const slugifyPost = (post: BlogPost): string => {
         strict: true
     });
     return `${date}-${title}`;
+};
+
+export const contentHash = (content: string): string => {
+    return xxHash32(content, initialSeed).toString(16);
+};
+
+export const appendHash = (path: string, hash: string): string => {
+    return `${path}.${hash}`;
+}
+
+export const slugifyPostWithHash = (post: BlogPost): string => {
+    const slugified = slugifyPost(post);
+    const html = post.rendered?.html;
+    if (html) {
+        const hash = contentHash(html);
+        return appendHash(slugified, hash);
+    }
+    else {
+        return slugified;
+    }
 };
