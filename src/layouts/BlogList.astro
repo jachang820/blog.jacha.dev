@@ -38,7 +38,7 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
         {
             page.data.map((post) => (
                 <li>
-                    <a href={`/${slugifyPost(post)}/`}>
+                    <a href={`/${slugifyPost(post)}.html`}>
                         <h4 class="title">
                             {post.data.title} 
                             <span class="date">| <FormattedDate date={post.data.pubDate} /></span>
