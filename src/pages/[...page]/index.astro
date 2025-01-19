@@ -1,10 +1,10 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
-import Base from '../layouts/Base.astro';
-import BlogList from '../layouts/BlogList.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { sortByDateDesc } from '../helpers';
+import Base from '../../layouts/Base.astro';
+import BlogList from '../../layouts/BlogList.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { sortByDateDesc } from '../../helpers';
 
 type BlogPost = CollectionEntry<'blog'>;
 
