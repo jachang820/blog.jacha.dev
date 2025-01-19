@@ -44,5 +44,8 @@ const title = SITE_TITLE + ` -- Posts from ${month}/${year}.`;
 ---
 
 <Base title={title} description={SITE_DESCRIPTION}>
+    <Fragment slot="head">
+		<meta http-equiv="Cache-Control" content="max-age=0, must-revalidate"/>
+	</Fragment>
 	<BlogList {page} {Number(year)} {Number(month) - 1} />
 </Base>

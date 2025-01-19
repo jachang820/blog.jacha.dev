@@ -22,6 +22,7 @@ const { title, description } = Astro.props;
 	<head>
 		<BaseHead {title} {description} />
         <FontHead />
+        <slot name="head" />
 	</head>
 	<body>
         <MiniNav />
