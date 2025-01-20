@@ -9,9 +9,9 @@ I built the site, signed up for a domain on [Porkbun](https://porkbun.com/). Now
 For the sake of organization, I will be splitting this topic into three separate posts, each centered around a different AWS service that is involved.
 
 See the other posts:
-- [Part 1: Static website hosting using AWS S3.](/2025-01-18-aws-deploy-a-static-site-with-https-part-1/)
-- [Part 2: HTTPS to an S3 origin the right way using AWS Cloudfront.](/2025-01-21-aws-deploy-a-static-site-with-https-part-2/)
-- [Part 3: Synchronize the dev environment to S3 buckets using AWS CLI.](/2025-01-25-aws-deploy-a-static-site-with-https-part-3/)
+- **Part 1: Static website hosting using AWS S3.**
+- [Part 2: HTTPS to an S3 origin the right way using AWS Cloudfront.](/2025-01-21-aws-deploy-a-static-site-with-https-part-2.html)
+- [Part 3: Synchronize the dev environment to S3 buckets using AWS CLI.](/2025-01-25-aws-deploy-a-static-site-with-https-part-3.html)
 
 ## Pricing
 

@@ -83,7 +83,7 @@ const transformer: DevTransformer = {
         
         // Get existing code
         const pre = root.children[0] as Element;
-        const lang = pre.properties['dataLanguage'] as string;
+        const lang = pre.properties['data-language'] as string;
         pre.properties['data-block-code'] = '';
         pre.properties['data-pagefind-ignore'] = 'all'; // Ignore code for search
         pre.properties['style'] = pre.properties['style'] + ' overflow-y: hidden;';

@@ -1,4 +1,9 @@
-import type { CodeOptionsMeta } from 'shiki';
+import type { ThemePresets } from '@astrojs/markdown-remark';
+import type { 
+    CodeOptionsMeta,
+    ThemeRegistration,
+    ThemeRegistrationRaw 
+} from 'shiki';
 import type { Element, ElementContent, Root } from 'hast';
 
 export type ParseMetaFunction = (keyword?: string) => unknown;
@@ -69,3 +74,5 @@ export type TraversalFunction = (
     parent: Element | null,
     siblingIndex: number
 ) => boolean;
+
+export type ThemeTypes = ThemeRegistration | ThemeRegistrationRaw | ThemePresets;

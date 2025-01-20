@@ -70,7 +70,7 @@ const transformer: DevTransformer = {
     name: transformerName,
     register: new Map([
         ['highlight', (keyword): HighlightedSegment[] | null => {
-            const regexp = /(?:([\d]+)(?:-([\d]+))?(?::([\d]+)(?:-([\d]+))?|(?::"(.+)"|:\/(.+)\/)(?:\[([\d]+)(?:-([\d]+))?\])?)?(?:#([A-Za-z0-9-]+))?),?/g;
+            const regexp = /(?:([\d]+)(?:-([\d]+))?(?::([\d]+)(?:-([\d]+))?|(?::"(.+?)"|:\/(.+?)\/)(?:\[([\d]+)(?:-([\d]+))?\])?)?(?:#([A-Za-z0-9-]+))?),?/g;
             if (keyword) {
                 const values = [...keyword.matchAll(regexp)].map((match: RegExpExecArray): HighlightedSegment => {
             

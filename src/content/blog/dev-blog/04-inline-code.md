@@ -4,6 +4,8 @@ description: "Astro has Shiki built-in for code blocks, but the integration conf
 pubDate: 'Dec 24 2024'
 tags: ['typescript', 'shiki']
 ---
+**Note:** Between Astro version 5.1.1 and 5.1.7, `getSingletonHighlighterCore` no longer works. There is a "must invoke loadWasm first" error, but Vite module runner crashes when web assemblies are loaded. Luckily, the compatible alternative `createHighlighter` has mostly the same interface and methods, except perhaps that it doesn't handle caching out of the box. See [this post](/2025-02-01-astro-update-broke-my-code-blocks.html) for more details.
+
 Astro is shipped with Shiki, which can be configured directly through its built-in `defineConfig` function.
 ```typescript title=/astro.config.ts; highlight=[13]
 export default defineConfig({
@@ -224,15 +226,15 @@ const resolveTheme = (themeText: ThemeTypes): ThemeInput => {
 ```
 
 Now that the highlighter settings are ready, we can now initialize the cached highlighter and write a function to load languages, which seems to be a large consideration in the Rehype Pretty Code example. We'll also define an interface for the data that will be extracted from each inline code instance we encounter from the `visit` function tree traversal.
-```typescript title=/src/markdown/inline-code.ts; dir-level-fade=1; start-line=17
+```typescript title=/src/markdown/inline-code.ts; dir-level-fade=1; start-line=17; highlight=[22-27]
 interface InlineCodeInstance {
     node: Element,
     code: string,
     language: string
 }
+//[!code warning] At some version between Astro 5.1.1 and 5.1.7, getSingletonHighlighterCore is no longer compatible. Use "import { createHighlighter } from 'shiki';" instead.
 const getCachedHighlighter = (): Promise<HighlighterCore> => {
     return getSingletonHighlighterCore({
-        // [!code annotation] We could also add commonly used languages here/
         langs: [resolveLanguage('plaintext')], 
         themes: Object.values(shikiThemes).map(resolveTheme)
     });

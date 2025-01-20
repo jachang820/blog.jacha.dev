@@ -147,8 +147,8 @@ const description = post.data.description;
 			}
 		}
 
-		.astro-code,
-		.astro-code code {
+		.shiki,
+		.shiki code {
 
 			@media (prefers-color-scheme: light) {
 				background-color: var(--shiki-light-bg);
@@ -182,7 +182,7 @@ const description = post.data.description;
 			padding: 2px;
 		}
 
-		.astro-code {
+		.shiki {
 			padding-top: 0.25rem;
 			margin: 0;
 			z-index: 5;
@@ -427,6 +427,18 @@ const description = post.data.description;
 							border: 1px solid var(--shiki-dark);
 							background-color: var(--shiki-highlighted-dark-bg);
 						}
+					}
+
+					& mark[data-highlighted-id="error"] {
+						border: 0;
+						background-color: inherit;
+						text-decoration: wavy underline red;
+					}
+
+					& mark[data-highlighted-id="warning"] {
+						border: 0;
+						background-color: inherit;
+						text-decoration: wavy underline green;
 					}
 
 					& span[data-line-number] {

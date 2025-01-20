@@ -189,6 +189,19 @@ const message = "Hello world!";
 console.log(message);
 ```
 
+`data-highlighted-id` can be used in unique circumstances, but they can also used for more common use cases. One example is when we want to point out a problem with the code.
+````markdown
+```typescript highlight=[1:"unused"#warning, 2:"Uh oh!"#error]
+import { unused } from 'somewhere';
+const variable: number = "Uh oh!"
+```
+````
+```typescript highlight=[1:"unused"#warning, 2:"Uh oh!"#error]
+import { unused } from 'somewhere';
+const variable: number = "Uh oh!"
+```
+
+
 We can also select the range with a string to match:
 ````markdown
 ```javascript highlight=[2:"message"]
@@ -276,7 +289,7 @@ Whitespaces in the code are automatically converted to symbols representing spac
 ````markdown
 ```javascript tab-size=4;
 		const message = "Hello world!"; // 2 tabs
-        console.log(message); // 2 spaces
+        console.log(message); // 8 spaces
 ```
 ````
 

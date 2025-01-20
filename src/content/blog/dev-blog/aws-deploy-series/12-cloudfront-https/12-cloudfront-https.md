@@ -11,9 +11,9 @@ A _content delivery network (CDN)_ is basically an "edge" server that is geograp
 There are a lot of added benefits to Cloudfront, such as static IPs, security to control access, traffic monitoring and alarms, handling query strings, and reporting to name a few. The main advantage that we might be interested in is HTTPS, especially since S3 doesn't support it. The latter isn't a huge deal, since HTTPS primarily prevents man-in-the-middle attacks, and the possibility that someone intercepts a packet between two AWS services isn't high.
 
 See the other posts:
-- [Part 1: Static website hosting using AWS S3.](/2025-01-18-aws-deploy-a-static-site-with-https-part-1/)
-- [Part 2: HTTPS to an S3 origin the right way using AWS Cloudfront.](/2025-01-21-aws-deploy-a-static-site-with-https-part-2/)
-- [Part 3: Synchronize the dev environment to S3 buckets using AWS CLI.](/2025-01-25-aws-deploy-a-static-site-with-https-part-3/)
+- [Part 1: Static website hosting using AWS S3.](/2025-01-18-aws-deploy-a-static-site-with-https-part-1.html)
+- **Part 2: HTTPS to an S3 origin the right way using AWS Cloudfront.**
+- [Part 3: Synchronize the dev environment to S3 buckets using AWS CLI.](/2025-01-25-aws-deploy-a-static-site-with-https-part-3.html)
 
 ## CDN and HTTPS with Cloudfront
 

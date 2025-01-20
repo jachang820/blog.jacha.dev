@@ -1,25 +1,15 @@
-import type { ShikiConfig, AstroUserConfig } from 'astro';
-
-import transformer from './transformers';
-
-import highlightInlineCode from './inline-code';
+import type { AstroUserConfig } from 'astro';
+import highlightCode from './syntax-highlight';
+import type { ThemeTypes } from './types';
 
 type MarkdownConfig = NonNullable<AstroUserConfig['markdown']>;
 
-const shikiConfig: Partial<ShikiConfig> = {
-    themes: {
-        light: 'github-light-default',
-        dark: 'github-dark-dimmed',
-    },
-    defaultColor: false,
-    transformers: [transformer]
+export const shikiThemes: Record<string, ThemeTypes> = {
+    light: 'github-light-default',
+    dark: 'github-dark-dimmed',
 };
 
-const config: Partial<MarkdownConfig> = {
-    shikiConfig: shikiConfig,
-    rehypePlugins: [
-        highlightInlineCode
-    ]
+export const config: Partial<MarkdownConfig> = {
+    syntaxHighlight: false,
+    rehypePlugins: [highlightCode]
 };
-
-export default config;
