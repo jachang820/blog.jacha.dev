@@ -90,7 +90,7 @@ const transformer: DevTransformer = {
 
         return line;
     },
-    styleElements: (pre, _meta, numberingMap: Map<number, number | null>) => {
+    styleElements: (pre, _meta) => {
         pre = pre as Element;
         const code = pre.children[0] as Element;
 

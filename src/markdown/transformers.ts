@@ -104,9 +104,7 @@ const transformer = (metadata?: string): ShikiTransformer => {
         pre(pre) {
             // Run all style functions
             const meta = this.options.meta!;
-            const commentKey = CommentTransformer.name;
-            const numberingMap: Map<number, number | null> = meta[commentKey];
-            LineNumberTransformer.styleElements!(pre, meta, numberingMap);
+            LineNumberTransformer.styleElements!(pre, meta, null);
             HighlightTransformer.styleElements!(pre, meta, null);
             WhitespaceTransformer.styleElements!(pre, meta, null);
             FigureTransformer.styleElements!(pre, meta, null);

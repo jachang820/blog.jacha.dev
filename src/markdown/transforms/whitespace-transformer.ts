@@ -61,7 +61,6 @@ const transformer: DevTransformer = {
             return line;
         }
 
-        const tabSize: number = meta[metaKey].get('tab-size');
         const flexibleIndents: boolean = meta[metaKey].get('flexible-indents');
         const propMap = new Map<string, string>([
             [' ', 'data-line-space'],
