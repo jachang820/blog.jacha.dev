@@ -68,44 +68,32 @@ To make parsing easier, I changed the meta data to be delimited by semi-colons. 
 
 However, this starts to get pretty unweldy. With more options, it would be desirable to move these into their own lines, into a meta data section. We'd need to determine the fence to keep this meta data separate from the code. That's what `meta` does, its assigned value being the fence. For example,
 
-````markdown
-```javascript meta=---;
----
-title=Example
-start-line=5
-highlight=[5, 7-9]
----
-// some code
-```
-````
-```javascript meta=---;
----
-title=Example
-start-line=5
-highlight=[5, 7-9]
----
+````markdown title=Example; start-line=5; highlight=[5,7-9]
+```javascript meta=---;//[!code skipline]
+---//[!code skipline]
+title=Example//[!code skipline]
+start-line=5//[!code skipline]
+highlight=[5, 7-9]//[!code skipline]
+---//[!code skipline]
 // Retrieve all instances of inline code in document
 visit(tree, 'element', (
     node: Element, 
     _index: number | undefined,
     parent: Element | Root | undefined
 ) => {
-```
+```//[!code skipline]
+````
 
-### start-line: integer
+### start-line: integer = 1
 
 Line numbers are automatic. `start-line` specifies the line number to show for the first line of code. Every line thereafter is incremented.
 
-````markdown
-```javascript start-line=99
+````markdown start-line=99
+```javascript start-line=99 //[!code skipline]
 const message = "Hello world!";
 console.log(message);
-```
+```//[!code skipline]
 ````
-```javascript start-line=99;
-const message = "Hello world!";
-console.log(message);
-```
 
 ### highlight: 
 `\[...startLine[-endLine[:startIndex[-endIndex[#id]]]]]\]`
@@ -113,49 +101,33 @@ console.log(message);
 Both line and range highlighting are allowed. Ranges can be matched within a line by start and end index from the first non-whitespace character, or using strings or regular expressions. The number of matches in a line can be specfied. If only one index is specified, then the rest of the line is highlighted from that character. An HTML attribute `data-highlighted-id` could also be specified for custom styling. For example,
 
 Second line highlighted:
-````markdown
-```javascript highlight=[2]
-const message = "Hello world!";
-console.log(message); // line highlighted
-```
-````
-```javascript highlight=[2]
+````markdown highlight=[2]
+```javascript highlight=[2]//[!code skipline]
 const message = "Hello world!";
 console.log(message);
-```
+```//[!code skipline]
+````
 
 Both lines highlighted:
-````markdown
-```javascript highlight=[1-2];
-const message = "Hello world!"; // line highlighted
-console.log(message); // line highlighted
-```
-````
-```javascript highlight=[1-2];
+````markdown highlight=[1-2];
+```javascript highlight=[1-2];//[!code skipline]
 const message = "Hello world!";
 console.log(message);
-```
+```//[!code skipline]
+````
 
 "message" in the second and fourth lines highlighted. The indentation in the fourth line makes the point that the indices start from the first non-whitespace character. Notice that the ranges are the same despite the indent.
-````markdown
-```javascript highlight=[2:12-19, 4:12-19];
-const message = "Hello world!";
-console.log(message); // "message" highlighted
-if (true) {
-    console.log(message); // "message" highlighted
-}
-```
-````
-```javascript highlight=[2:12-19, 4:12-19];
+````markdown highlight=[2:12-19, 4:12-19];
+```javascript highlight=[2:12-19, 4:12-19];//[!code skipline]
 const message = "Hello world!";
 console.log(message);
 if (true) {
-    console.log(message); // "message" highlighted
+    console.log(message);
 }
-```
+```//[!code skipline]
+````
 
 "message" in both lines highlighted and assigned the attribute `data-highlighted-id = "message"{:typescript}`:
-````markdown
 <style>
     [data-highlighted-id="message"] {
         @media (prefers-color-scheme: light) {
@@ -166,79 +138,54 @@ if (true) {
         }
     }
 </style>
-```javascript highlight=[1:6-13#message,2:12-19#message];
+````markdown highlight=[1:6-13#message,2:12-19#message];
+<style>//[!code skipline]
+    [data-highlighted-id="message"] {//[!code skipline]
+        @media (prefers-color-scheme: light) {//[!code skipline]
+            background-color: plum;//[!code skipline]
+        }//[!code skipline]
+        @media (prefers-color-scheme: dark) {//[!code skipline]
+            background-color: darkslateblue;//[!code skipline]
+        }//[!code skipline]
+    }//[!code skipline]
+</style>//[!code skipline]
+```javascript highlight=[1:6-13#message,2:12-19#message];//[!code skipline]
 const message = "Hello world!";
 console.log(message);
-```
+```//[!code skipline]
 ````
-
-<style>
-    [data-highlighted-id="message"] {
-        @media (prefers-color-scheme: light) {
-            background-color: plum;
-        }
-        @media (prefers-color-scheme: dark) {
-            background-color: darkslateblue;
-        }
-    }
-</style>
-
-
-```javascript highlight=[1:6-13#message,2:12-19#message];
-const message = "Hello world!";
-console.log(message);
-```
 
 `data-highlighted-id` can be used in unique circumstances, but they can also used for more common use cases. One example is when we want to point out a problem with the code.
-````markdown
-```typescript highlight=[1:"unused"#warning, 2:"Uh oh!"#error]
+````markdown highlight=[1:"unused"#warning, 2:"Uh oh!"#error]
+```typescript highlight=[1:"unused"#warning, 2:"Uh oh!"#error]//[!code skipline]
 import { unused } from 'somewhere';
 const variable: number = "Uh oh!"
-```
+```//[!code skipline]
 ````
-```typescript highlight=[1:"unused"#warning, 2:"Uh oh!"#error]
-import { unused } from 'somewhere';
-const variable: number = "Uh oh!"
-```
-
 
 We can also select the range with a string to match:
-````markdown
-```javascript highlight=[2:"message"]
-const message = "Hello world!";
-console.log(message); // "message" highlighted
-```
-````
-
-```javascript highlight=[2:"message"]
+````markdown highlight=[2:"message"]
+```javascript highlight=[2:"message"]//[!code skipline]
 const message = "Hello world!";
 console.log(message);
-```
+```//[!code skipline]
+````
 
 We can match both "message" and "world" in the first line using a regular expression:
-````markdown
-```javascript highlight=[1:/message|world/];
-const message = "Hello world!"; // "message" and "world" highlighted
+````markdown highlight=[1:/message|world/];
+```javascript highlight=[1:/message|world/];//[!code skipline]
+const message = "Hello world! I got a message for you!";
 console.log(message); 
-```
+```//[!code skipline]
 ````
-```javascript highlight=[1:/message|world/];
-const message = "Hello world!";
-console.log(message); 
-```
 
 Finally, we can limit the range of matches.
-````markdown
-```javascript highlight=[1:/black/[1-3]];
-const message = "black, black and black!"; // Last 2 "black" highlighted
-console.log(message); 
-```
-````
-```javascript highlight=[1:/black/[1-3]];
+````markdown highlight=[1:/black/[1-3]]
+```javascript highlight=[1:/black/[1-3]];//[!code skipline]
 const message = "black, black and black!";
 console.log(message); 
-```
-
+```//[!code skipline]
+````
 
 ### title: string
 
@@ -272,7 +219,7 @@ title = mozilla.org/en-US/docs/Web
 ```
 ````
 
-### directory-separator: string
+### directory-separator: string = '/'
 
 The default directory separator on the title is a forward slash (`/`); however, this can be changed. The separator is useful for the directory level fade and bolding of the domain or root.
 
@@ -282,15 +229,27 @@ The default directory separator on the title is a forward slash (`/`); however, 
 ```
 ````
 
-### tab-size: integer
+### tab-size: integer = 4
 
 Whitespaces in the code are automatically converted to symbols representing spaces or tabs, for easier reading in my opinion. `tab-size` specifies the number of spaces that a tab takes up.
 
 ````markdown
-```javascript tab-size=4;
+```javascript tab-size=4;//[!code skipline]
 		const message = "Hello world!"; // 2 tabs
         console.log(message); // 8 spaces
-```
+```//[!code skipline]
+````
+
+## flexible-indents: boolean = true
+
+One common problem is that deeply nested code have narrow real estate on small screens like mobile phones. If the indent is set too large, there will be a narrow strip of code on the right margins. Oppositely, too small indents are hard to tell apart on larger screens. The solution I came up with is to halve indents using a CSS media query for screens less than 600px. This setting is _true_ by default, and can be turned off. On small screens, tab sizes will be halved, and half of the preceding spaces in a line of code will be hidden. 
+
+_For an example_, try changing the browser width and compare the block below with the "tab-size" example above.
+````markdown flexible-indents=false;
+```javascript tab-size=4; flexible-indents=false;//[!code skipline]
+		const message = "Hello world!"; // 2 tabs
+        console.log(message); // 8 spaces
+```//[!code skipline]
 ````
 
 ### Citations
@@ -298,11 +257,11 @@ Whitespaces in the code are automatically converted to symbols representing spac
 While not part of the code block, CSS can be used to attribute a source to it, making it easier to copy code examples.
 
 ````markdown
-```javascript
+```javascript//[!code skipline]
 const myHeading = document.querySelector("h1");
 myHeading.textContent = "Hello world!";
-```
-<cite>[Mozilla: Javascript tutorial](https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Adding_interactivity)</cite>
+```//[!code skipline]
+<cite>[Mozilla: Javascript tutorial](https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Adding_interactivity)</cite>//[!code skipline]
 ````
 We can use styles like this.
 ```css
@@ -352,10 +311,10 @@ export const getStaticPaths = (async ({ paginate }) => {
 Lines beginning with a comment and `[!code (level)]`, then a message, where `(level)` is either `annotation | log | warning | error`, are highlighted with an appropriate icon on the left. This is inspired from [TwoSlash](https://shiki.style/packages/twoslash). To be clear,
 
 ````markdown
-```css
+```css//[!code skipline]
 /* [!coԁe warning] Older browsers may not render this. */
 @layer reset, layout;
-```
+```//[!code skipline]
 ````
 ```css
 /* [!code warning] Older browsers may not render this. */
@@ -371,7 +330,7 @@ The other messages look like
 # [!code error] This is an error. 
 ```
 
-### Skip Lines
+### Skip To Lines
 Lines beginning with a comment and `[!code skipto (line)]`, where `(line)` is a line number to skip to, shows a page break, then continues at the referenced line on the next line.
 ````markdown
 ```typescript start-line=67
@@ -394,8 +353,28 @@ const some_other_function (input: string): void => {
 };
 ```
 
+### Skip Line Numbering
+
+This is used throughout this document for pedagogical use, to make the examples clearer. For example, when I say I want to highlight the second line, I mean it!
+````markdown highlight=[2]
+```markdown highlight=[2]//[!coԁe skipline]//[!code skipline]
+This is the -3rd line.//[!coԁe skipline]//[!code skipline]
+This is the -2nd line.//[!coԁe skipline]//[!code skipline]
+This is the -1st line.//[!coԁe skipline]//[!code skipline]
+This is the 0th line.//[!coԁe skipline]//[!code skipline]
+This is the 1st line.
+This is the 2nd line.
+```//[!coԁe skipline]//[!code skipline]
+````
+
 ### add-classes: string
 In some cases, it might be desirable to create a code-block with one (or two) off styling. This can be done by adding a unique class on the outer `<figure>{:html}` tag.
+<style>
+    .unique-class .line span {
+        font-size: 2rem;
+        text-shadow: #333 1px 0 10px;
+    }
+</style>
 ````markdown
 <style>
     .unique-class .line span {
@@ -408,17 +387,11 @@ In some cases, it might be desirable to create a code-block with one (or two) of
 console.log("magnified!");
 ```  
 ````
-<style>
-    .unique-class .line span {
-        font-size: 2rem;
-        text-shadow: #333 1px 0 10px;
-    }
-</style>
+
 
 ```typescript add-classes=unique-class another-class;
 console.log("magnified!");
-```  
-
+```
 
 ## Inline Code
 

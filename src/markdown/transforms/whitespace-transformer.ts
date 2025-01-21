@@ -1,11 +1,15 @@
-import type { Element } from 'hast';
+import type { Element, Text } from 'hast';
 import { 
     metaKey,
     parseIntMeta,
     cloneElement,
     inOrderTraversal
 } from '../utils';
-import type { DevTransformer, TraversalFunction } from '../types';
+import type { 
+    DevTransformer, 
+    TraversalFunction,
+    ParseMetaFunction
+} from '../types';
 
 const transformerName: string = 'devblog:highlight';
 
@@ -16,8 +20,9 @@ interface Params {
 
 const transformer: DevTransformer = {
     name: transformerName,
-    register: new Map([
-        ['tab-size', (keyword) => parseIntMeta(keyword) || 4]
+    register: new Map<string, ParseMetaFunction>([
+        ['tab-size', (keyword) => parseIntMeta(keyword) || 4],
+        ['flexible-indents', (keyword) => keyword?.trim() !== 'false']
     ]),
     transform: (line, meta, { index, excludeProps}: Params) => {
         /* 
@@ -36,11 +41,48 @@ const transformer: DevTransformer = {
             }
         }
 
+        if (line.children.length !== 3) {
+            console.error(
+                `Line on index ${index} has wrong number of children. ` + 
+                'Make sure Line Numbering has been applied.');
+            return line;
+        }
+
+        const linePreWhitespace = line.children[1] as Element;
+        const lineCode = line.children[2] as Element;
+        if (
+            !('data-line-code-pre-ws' in linePreWhitespace.properties) ||
+            !('data-line-code' in lineCode.properties) ||
+            !(linePreWhitespace.children.length <= 1)
+        ) {
+            console.error(
+                `Malformed line on index ${index}. ` + 
+                'Make sure Line Numbering has been applied.');
+            return line;
+        }
+
         const tabSize: number = meta[metaKey].get('tab-size');
+        const flexibleIndents: boolean = meta[metaKey].get('flexible-indents');
         const propMap = new Map<string, string>([
             [' ', 'data-line-space'],
             ['\t', 'data-line-tab'],
         ]);
+
+        // Half indentation for small screens
+        let startFlexibleIndent: number = 0;
+        if (linePreWhitespace.children.length > 0) {
+            const whitespaceToken = linePreWhitespace.children[0] as Element;
+            const whitespaceText = whitespaceToken.children[0] as Text;
+            const numStartingWS = whitespaceText.value.length;
+            if (flexibleIndents) {
+                startFlexibleIndent = Math.ceil(numStartingWS / 2);
+                linePreWhitespace.properties['data-line-flexible-ws'] = '';
+            }
+            else {
+                startFlexibleIndent = numStartingWS;
+            }
+            
+        }
 
         const splitWhitespaces: TraversalFunction = (node, parent, index) => {
             if (
@@ -48,6 +90,8 @@ const transformer: DevTransformer = {
                 node.children.length === 1 &&
                 node.children[0].type === 'text'
             ) {
+                const isToken = parent && 'data-line-code' in parent?.properties;
+
                 const text = node.children[0].value;
 
                 // Ignore whitespace that has already been processed
@@ -70,8 +114,12 @@ const transformer: DevTransformer = {
                         if (propMap.has(part)) {
                             clone.properties[propMap.get(part)!] = '';
                             delete clone.properties.style;
-                            if (part === '\t') {
-                                clone.properties['style'] = `tab-size: ${tabSize};`;
+                            if (
+                                !isToken && 
+                                parts.length >= startFlexibleIndent &&
+                                part === ' '
+                            ) {
+                                clone.properties['data-line-flexible-ws'] = '';
                             }
                         }
                         parts.push(clone);
@@ -84,25 +132,8 @@ const transformer: DevTransformer = {
             return true;
         };
 
-        if (line.children.length !== 3) {
-            console.error(
-                `Line on index ${index} has wrong number of children. ` + 
-                'Make sure Line Numbering has been applied.');
-        }
-        else {
-            const linePreWhitespace = line.children[1] as Element;
-            const lineCode = line.children[2] as Element;
-            if (!('data-line-code-pre-ws' in linePreWhitespace.properties) ||
-                !('data-line-code' in lineCode.properties)
-            ) {
-                console.error(
-                    `Malformed line on index ${index}. ` + 
-                    'Make sure Line Numbering has been applied.');
-            } else {
-                inOrderTraversal(linePreWhitespace, null, 0, splitWhitespaces);
-                inOrderTraversal(lineCode, null, 0, splitWhitespaces);
-            }
-        }
+        inOrderTraversal(linePreWhitespace, null, 0, splitWhitespaces);
+        inOrderTraversal(lineCode, null, 0, splitWhitespaces);
 
         return line;
     },

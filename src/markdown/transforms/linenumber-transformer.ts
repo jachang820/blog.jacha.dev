@@ -1,4 +1,5 @@
 import type { Element, Text } from 'hast';
+import type { CodeOptionsMeta } from 'shiki';
 import { 
     parseIntMeta, 
     alterRGB, 
@@ -8,7 +9,6 @@ import {
     KeepSide
 } from '../utils';
 import type { DevTransformer } from '../types';
-
 const transformerName: string = 'devblog:line-numbers';
 
 interface Params {
@@ -16,12 +16,25 @@ interface Params {
     numberingMap: Map<number, number | null>;
 }
 
+const findLastLineDigits = (
+    numberingMap: Map<number, number | null>,
+    meta: NonNullable<CodeOptionsMeta['meta']>
+): string => {
+    if (!meta[transformerName]) {
+        const lastLine = [...numberingMap.values()]
+            .findLast((n) => n)!;
+        const numDigits = lastLine.toString().length;
+        meta[transformerName] = numDigits.toString();
+    }
+    return meta[transformerName];
+};
+
 const transformer: DevTransformer = {
     name: transformerName,
     register: new Map([
         ['start-line', (keyword) => parseIntMeta(keyword) || 1]
     ]),
-    transform: (line, _meta, { index, numberingMap }: Params) => {
+    transform: (line, meta, { index, numberingMap }: Params) => {
         /* 
             Hook: line
             Params:
@@ -56,7 +69,11 @@ const transformer: DevTransformer = {
             return true;
         });
 
-        const lineNumberSpan = createElement('span', {'data-line-number': ''});
+        const lineNumberDigits = findLastLineDigits(numberingMap, meta);
+        const lineNumberSpan = createElement('span', {
+            'data-line-number': '',
+            'data-line-number-max-digits': lineNumberDigits
+        });
         lineNumberSpan.children = [lineNumberText];
 
         const lineCodeSpan = createElement('span', {'data-line-code': ''});
@@ -76,11 +93,6 @@ const transformer: DevTransformer = {
     styleElements: (pre, _meta, numberingMap: Map<number, number | null>) => {
         pre = pre as Element;
         const code = pre.children[0] as Element;
-        const lastLine = [...numberingMap.values()]
-            .findLast((n) => n)!;
-        const numDigits = lastLine.toString().length;
-
-        code.properties['data-line-number-max-digits'] = numDigits.toString();
 
         const newStyles: string[] = [];
         (pre.properties['style'] as string).split(';').forEach((style) => {

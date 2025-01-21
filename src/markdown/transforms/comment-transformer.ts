@@ -3,6 +3,7 @@ import type { CommentTransformerMeta, DevTransformer } from '../types';
 import { default as DiffTransformer } from './diff-transformer';
 import { default as MessageTransformer } from './message-transformer';
 import { default as SkipToTransformer } from './skipto-transformer';
+import { default as SkipLineTransformer } from './skipline-transformer';
 
 export const transformerName: string = 'devblog:comments';
 
@@ -38,11 +39,14 @@ const transformer: DevTransformer = {
         code = DiffTransformer.setup!(code, meta, commentMap);
         code = MessageTransformer.setup!(code, meta, commentMap);
         code = SkipToTransformer.setup!(code, meta, commentMap);
+        code = SkipLineTransformer.setup!(code, meta, commentMap);
 
         // Gather lines to skip numbering
         const diffKey = DiffTransformer.name;
         const messageKey = MessageTransformer.name;
         const skipToKey = SkipToTransformer.name;
+        const skipLineKey = SkipLineTransformer.name;
+
         const messageLines = new Set<number>([...meta[messageKey].keys()]);
         const diffMeta: Map<number, CommentTransformerMeta> = meta[diffKey];
         const diffRemoveLines = new Set<number>();
@@ -51,7 +55,8 @@ const transformer: DevTransformer = {
                 diffRemoveLines.add(index);
             }
         });
-        const skipLines = messageLines.union(diffRemoveLines);
+        const skipLineLines = meta[skipLineKey];
+        const skipLines = messageLines.union(diffRemoveLines).union(skipLineLines);
         const skipToMap: Map<number, number> = meta[skipToKey];
 
         // Map line index to line numbering
@@ -87,6 +92,7 @@ const transformer: DevTransformer = {
         line = DiffTransformer.transform!(line, meta, index);
         line = MessageTransformer.transform!(line, meta, index);
         line = SkipToTransformer.transform!(line, meta, index);
+        line = SkipLineTransformer.transform!(line, meta, index);
         
         return line;
     },
@@ -94,6 +100,7 @@ const transformer: DevTransformer = {
         DiffTransformer.cleanup!(pre);
         MessageTransformer.cleanup!(pre);
         SkipToTransformer.cleanup!(pre);
+        SkipLineTransformer.cleanup!(pre);
         delete pre.properties[transformerName];
     }
 };

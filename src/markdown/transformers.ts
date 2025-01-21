@@ -94,7 +94,6 @@ const transformer = (metadata?: string): ShikiTransformer => {
             // Split whitespaces into their own spans
             const excludeProps = new Set([
                 'data-line-message', 
-                'data-line-diff',
                 'data-line-page-break'
             ]);
             WhitespaceTransformer.transform!(line, meta,
