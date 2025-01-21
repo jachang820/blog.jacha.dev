@@ -1,6 +1,6 @@
 # Astro Dev Blog
 
-This blog was written with the help of the [Astro](https://astro.build/) version 5.1.7 static site generator. It is tentatively named **Thoughts.toString()** and hosted at [https://blog.jacha.dev](https://blog.jacha.dev). The styling is basic, but functional. It has been tested to work on the latest versions of Chrome, Edge and Firefox, on desktop and an Android phone. It supports light and dark themes.
+This blog was written with the help of the [Astro](https://astro.build/) version 5.1.1 static site generator. It is tentatively named **Thoughts.toString()** and hosted at [https://blog.jacha.dev](https://blog.jacha.dev). The styling is basic, but functional. It has been tested to work on the latest versions of Chrome, Edge and Firefox, on desktop and an Android phone. It supports light and dark themes.
 
 ## Customized Shiki Code Block
 
