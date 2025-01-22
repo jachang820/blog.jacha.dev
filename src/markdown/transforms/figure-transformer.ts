@@ -86,7 +86,13 @@ const transformer: DevTransformer = {
         const lang = pre.properties['data-language'] as string;
         pre.properties['data-block-code'] = '';
         pre.properties['data-pagefind-ignore'] = 'all'; // Ignore code for search
-        pre.properties['style'] = pre.properties['style'] + ' overflow-y: hidden;';
+        let styles = (pre.properties['style'] as string) || '';
+        styles = styles.trim();
+        if (styles.length > 0 && styles.at(-1) !== ';') {
+            styles += ';';
+        }
+        styles += 'overflow-y: hidden;';
+        pre.properties['style'] = styles;
 
         const figcaptionStyles: string = meta[transformerName];
 

@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
 import TagList from '../components/TagList.astro';
+import GisgusComments from '../components/GisgusComments.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
@@ -30,6 +31,7 @@ const { title, tags, pubDate, updatedDate } = Astro.props;
 	<div class="prose" data-pagefind-body data-pagefind-weight="1">
 		<slot />
 	</div>
+    <GisgusComments />
 </article>
 
 <style>
