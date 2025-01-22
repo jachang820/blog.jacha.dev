@@ -6,8 +6,9 @@ import {
     type LanguageInput,
     type ThemeInput,
     type HighlighterCore,
+    createHighlighter
 } from 'shiki';
-import { createHighlighter } from 'shiki';
+// import { getSingletonHighlighterCore, createOnigurumaEngine } from 'shiki';
 import type { Element, Text, Root } from 'hast';
 import { visit } from 'unist-util-visit';
 import { shikiThemes } from '.';
@@ -107,7 +108,14 @@ const highlightCode = () => {
             (theme: ThemeTypes) => resolveTheme(theme))
     });
 
+    // const cachedHighlighter = getSingletonHighlighterCore({
+    //     langs: [resolveLanguage('plaintext')], 
+    //     themes: Object.values(shikiThemes).map(
+    //         (theme: ThemeTypes) => resolveTheme(theme)),
+    // });
+    
     return async (tree: Root) => {
+        
         const inlineInstances: CodeInstance[] = [];
         const blockInstances: CodeInstance[] = [];
         const loadedLanguages: Set<string> = new Set(['plaintext']);
@@ -147,7 +155,6 @@ const highlightCode = () => {
         for (const instance of inlineInstances) {
 
             await loadLanguage(highlighter, instance, loadedLanguages);
-            
             const root = highlighter.codeToHast(instance.code, {
                 lang: instance.language, 
                 themes: shikiThemes,
