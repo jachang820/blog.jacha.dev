@@ -1,4 +1,4 @@
-import type { AstroUserConfig, RehypePlugins } from 'astro';
+import type { AstroUserConfig } from 'astro';
 import highlightCode from './syntax-highlight';
 import type { ThemeTypes } from './types';
 
