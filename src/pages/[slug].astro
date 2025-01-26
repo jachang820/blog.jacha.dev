@@ -47,6 +47,17 @@ const description = post.data.description;
 			--blog-accent-dark: rgba(130 172 250 / 0.8);
 		}
 
+		@keyframes pageloadAnimate {
+            0% {
+                transform: translateY(2rem) scale(0.95, 0.95);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1, 1);
+                opacity: 1;
+            }
+        }
+
 		.prose h1, .prose h2, .prose h3, .prose h4 {
 			margin-top: 2.5rem;
 		}
@@ -54,6 +65,16 @@ const description = post.data.description;
 		.prose {
 			font-size: 1rem;
 			margin-bottom: 4rem;
+
+			& > * {
+                opacity: 0;
+                animation-duration: 0.5s;
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+                animation-delay: 100ms;
+                animation-iteration-count: 1;
+                animation-name: pageloadAnimate;
+                animation-fill-mode: forwards;
+            }
 
 			@media (min-width: 600px) {
 				font-size: 1.125rem;

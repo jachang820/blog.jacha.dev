@@ -36,12 +36,12 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
     }
     <ul>
         {
-            page.data.map((post) => (
-                <li>
+            page.data.map((post, index) => (
+                <li style={`--delay: ${(index + 1) * 150}ms;`}>
                     <a href={`/${slugifyPost(post)}.html`}>
                         <h4 class="title">
                             {post.data.title} 
-                            <span class="date">| <FormattedDate date={post.data.pubDate} /></span>
+                            <span class="date"> <FormattedDate date={post.data.pubDate} /></span>
                             {
                                 post.data.updatedDate && (
                                     <span class="date">
@@ -106,8 +106,29 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
     }
 
     @layer layout {
+        @keyframes pageloadAnimate {
+            0% {
+                transform: translateY(1rem) scale(0.95, 0.95);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1, 1);
+                opacity: 1;
+            }
+        }
+
         section {
             margin: 0;
+
+            & h1, & li, & button {
+                opacity: 0;
+                animation-duration: 0.7s;
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+                animation-delay: var(--delay, 0);
+                animation-iteration-count: 1;
+                animation-name: pageloadAnimate;
+                animation-fill-mode: forwards;
+            }
 
             @media (min-width: 1200px) {
                 margin: 0 1rem;
@@ -161,18 +182,20 @@ const monthAndYear = (month && year) ? `${monthNames[month]}, ${year}` : undefin
                     & .title {
                         margin: 0;
                         line-height: 1;
+                        font-size:1.4rem;
                     }
                     & .date {
-                        font-size: 1.4rem;
+                        font-size: 1.25rem;
                         font-weight: normal;
-                        vertical-align: middle;
                         margin: 0;
                         color: rgb(var(--gray));
+                        white-space: pre;
                     }
 
                     & p.description {
                         font-size: 1.125rem;
                         margin: 0.25rem 0.5rem;
+                        line-height: 1.25;
 
                         @media (prefers-color-scheme: light) {
                             color: var(--content-summary-description-light);
